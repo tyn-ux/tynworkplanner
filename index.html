@@ -1,0 +1,1025 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工作調度板 · Work Dispatch Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b2430;
+    --ink-soft:#3a4552;
+    --paper:#f4f5f2;
+    --surface:#ffffff;
+    --line:#e3e5e0;
+    --line-strong:#cdd0ca;
+    --muted:#6b7480;
+    --accent:#1d5fa8;      /* structural signal blue */
+    --accent-soft:#e8f0f8;
+    --alarm:#c4462e;       /* alarms / overdue only */
+    --alarm-soft:#fbeae6;
+    --warn:#b57a12;
+    --warn-soft:#fbf1dd;
+    --ok:#2f7d55;
+    --ok-soft:#e6f2ea;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(27,36,48,.06), 0 6px 20px rgba(27,36,48,.05);
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --disp:'Space Grotesk','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+    --body:'Inter','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:var(--body); color:var(--ink); background:var(--paper);
+    -webkit-font-smoothing:antialiased; line-height:1.45;
+  }
+  button{font-family:inherit; cursor:pointer}
+  input,textarea,select{font-family:inherit}
+  ::selection{background:var(--accent-soft)}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:40; background:var(--surface);
+    border-bottom:1px solid var(--line); box-shadow:var(--shadow);
+  }
+  .topbar-inner{display:flex; align-items:center; gap:16px; padding:12px 20px; flex-wrap:wrap}
+  .brand{display:flex; align-items:baseline; gap:10px; margin-right:4px}
+  .brand .mark{
+    font-family:var(--mono); font-weight:600; font-size:12px; letter-spacing:.5px;
+    background:var(--ink); color:#fff; padding:4px 8px; border-radius:6px;
+  }
+  .brand h1{font-family:var(--disp); font-size:16px; font-weight:600; margin:0; letter-spacing:.2px}
+  .brand small{color:var(--muted); font-size:11px; font-family:var(--mono)}
+
+  .tabs{display:flex; gap:6px; align-items:center; flex:1; min-width:200px; flex-wrap:wrap}
+  .tab{
+    font-family:var(--disp); font-size:13px; font-weight:500; color:var(--ink-soft);
+    background:transparent; border:1px solid transparent; padding:6px 12px; border-radius:999px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .tab .cnt{font-family:var(--mono); font-size:11px; color:var(--muted)}
+  .tab:hover{background:var(--paper)}
+  .tab.active{background:var(--ink); color:#fff; border-color:var(--ink)}
+  .tab.active .cnt{color:rgba(255,255,255,.7)}
+  .tab.addsec{color:var(--muted); border:1px dashed var(--line-strong)}
+  .tab.addsec:hover{color:var(--accent); border-color:var(--accent)}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:7px; border-radius:8px; border:1px solid var(--line-strong);
+    background:var(--surface); color:var(--ink); font-size:13px; font-weight:500; padding:8px 12px;
+  }
+  .btn:hover{border-color:var(--ink-soft)}
+  .btn svg{width:15px; height:15px}
+  .btn.primary{background:var(--accent); border-color:var(--accent); color:#fff}
+  .btn.primary:hover{background:#184e8c}
+  .btn.ghost{border-color:transparent; background:transparent; color:var(--muted); padding:8px}
+  .btn.ghost:hover{background:var(--paper); color:var(--ink)}
+  .btn.sm{padding:6px 10px; font-size:12px}
+
+  /* ---------- reminder banner ---------- */
+  .reminders{padding:0 20px}
+  .rem-card{
+    margin-top:12px; border:1px solid var(--alarm); background:var(--alarm-soft);
+    border-radius:var(--radius); padding:12px 14px; display:flex; gap:12px; align-items:flex-start;
+  }
+  .rem-card.soft{border-color:var(--warn); background:var(--warn-soft)}
+  .rem-card .bell{flex:0 0 auto; color:var(--alarm)}
+  .rem-card.soft .bell{color:var(--warn)}
+  .rem-body{flex:1; min-width:0}
+  .rem-body h3{margin:0 0 4px; font-size:13px; font-family:var(--disp); font-weight:600}
+  .rem-list{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+  .rem-chip{
+    font-size:12px; background:var(--surface); border:1px solid var(--line); border-radius:6px;
+    padding:4px 8px; display:inline-flex; gap:6px; align-items:center; cursor:pointer;
+  }
+  .rem-chip:hover{border-color:var(--ink-soft)}
+  .rem-chip .due{font-family:var(--mono); font-size:11px; color:var(--alarm)}
+
+  /* ---------- control row ---------- */
+  .controls{
+    display:flex; align-items:center; gap:14px; padding:14px 20px 0; flex-wrap:wrap;
+  }
+  .seg{display:inline-flex; background:var(--paper); border:1px solid var(--line); border-radius:999px; padding:3px}
+  .seg button{
+    border:0; background:transparent; padding:7px 16px; border-radius:999px; font-size:13px;
+    font-weight:500; color:var(--ink-soft); font-family:var(--disp);
+  }
+  .seg button.on{background:var(--surface); color:var(--ink); box-shadow:var(--shadow)}
+  .filters{display:flex; align-items:center; gap:8px; flex-wrap:wrap; flex:1}
+  .search{
+    display:flex; align-items:center; gap:8px; border:1px solid var(--line); background:var(--surface);
+    border-radius:8px; padding:6px 10px; min-width:180px;
+  }
+  .search input{border:0; outline:0; font-size:13px; width:100%; background:transparent}
+  .search svg{color:var(--muted); flex:0 0 auto}
+  .selpill{
+    border:1px solid var(--line); background:var(--surface); border-radius:8px; font-size:12.5px;
+    padding:6px 10px; color:var(--ink-soft);
+  }
+
+  /* ---------- board ---------- */
+  .board-wrap{padding:16px 20px 60px}
+
+  /* matrix */
+  .matrix{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .quad{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    display:flex; flex-direction:column; min-height:220px; overflow:hidden;
+  }
+  .quad-head{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:11px 14px; border-bottom:1px solid var(--line);
+  }
+  .quad-head .qtag{display:flex; align-items:center; gap:9px}
+  .qdot{width:9px; height:9px; border-radius:50%}
+  .quad-head h2{margin:0; font-family:var(--disp); font-size:13.5px; font-weight:600}
+  .quad-head .qsub{font-size:11px; color:var(--muted); font-family:var(--mono)}
+  .quad-head .qcnt{font-family:var(--mono); font-size:12px; color:var(--muted)}
+  .quad-body{padding:10px; display:flex; flex-direction:column; gap:9px; overflow-y:auto; flex:1}
+  .q1 .quad-head{background:var(--alarm-soft)} .q1 .qdot{background:var(--alarm)}
+  .q2 .quad-head{background:var(--accent-soft)} .q2 .qdot{background:var(--accent)}
+  .q3 .quad-head{background:var(--warn-soft)} .q3 .qdot{background:var(--warn)}
+  .q4 .quad-head{background:var(--paper)} .q4 .qdot{background:var(--muted)}
+
+  /* category — vertical stacked sections, tickets wrap in a grid */
+  .cats{display:flex; flex-direction:column; gap:14px}
+  .cat{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    display:flex; flex-direction:column;
+  }
+  .cat-head{display:flex; align-items:center; gap:9px; padding:11px 14px; border-bottom:1px solid var(--line)}
+  .cat-head .swatch{width:12px; height:12px; border-radius:3px; flex:0 0 auto}
+  .cat-head h2{margin:0; font-size:13px; font-weight:600; font-family:var(--disp); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .cat-head .qcnt{font-family:var(--mono); font-size:12px; color:var(--muted); margin-left:auto}
+  .cat-body{padding:12px; display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:10px; align-content:start}
+  .cat-body.is-empty{display:block}
+
+  /* ticket */
+  .ticket{
+    position:relative; border:1px solid var(--line); border-radius:8px; background:var(--surface);
+    padding:11px 12px 11px 15px; cursor:pointer; transition:border-color .12s, transform .06s;
+  }
+  .ticket:hover{border-color:var(--ink-soft)}
+  .ticket:active{transform:translateY(1px)}
+  .ticket .barcode{position:absolute; left:0; top:8px; bottom:8px; width:4px; border-radius:4px; background:var(--line-strong)}
+  .ticket-top{display:flex; align-items:center; gap:8px; margin-bottom:6px}
+  .ticket .jid{font-family:var(--mono); font-size:10.5px; color:var(--muted); letter-spacing:.3px}
+  .ticket .title{font-size:14px; font-weight:600; color:var(--ink); margin:2px 0 8px; line-height:1.35}
+  .chips{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+  .chip{
+    display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:500;
+    padding:3px 8px; border-radius:999px; white-space:nowrap;
+  }
+  .chip .cdot{width:7px; height:7px; border-radius:50%}
+  .chip.quad{background:var(--paper); color:var(--ink-soft); border:1px solid var(--line)}
+  .status-stamp{
+    font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.4px;
+    padding:2px 7px; border-radius:5px; text-transform:uppercase; border:1px solid;
+  }
+  .st-todo{color:var(--muted); border-color:var(--line-strong); background:var(--paper)}
+  .st-doing{color:var(--accent); border-color:var(--accent); background:var(--accent-soft)}
+  .st-pending{color:var(--warn); border-color:var(--warn); background:var(--warn-soft)}
+  .st-blocked{color:var(--alarm); border-color:var(--alarm); background:var(--alarm-soft)}
+  .st-done{color:var(--ok); border-color:var(--ok); background:var(--ok-soft)}
+  .ticket.is-done{opacity:.62}
+  .ticket.is-done .title{text-decoration:line-through; text-decoration-color:var(--line-strong)}
+  .progress{height:5px; background:var(--paper); border-radius:99px; overflow:hidden; margin-top:9px}
+  .progress i{display:block; height:100%; background:var(--accent); border-radius:99px}
+  .ticket-meta{display:flex; align-items:center; gap:12px; margin-top:8px; color:var(--muted); font-size:11px}
+  .ticket-meta .m{display:inline-flex; align-items:center; gap:4px; font-family:var(--mono)}
+  .ticket-meta .m.due-over{color:var(--alarm); font-weight:600}
+  .ticket-meta .m.due-soon{color:var(--warn); font-weight:600}
+  .ticket-meta svg{width:12px; height:12px}
+
+  .empty{
+    padding:26px 14px; text-align:center; color:var(--muted); font-size:12.5px;
+    border:1px dashed var(--line-strong); border-radius:8px; background:var(--paper);
+  }
+  .empty b{display:block; color:var(--ink-soft); font-family:var(--disp); margin-bottom:2px}
+
+  /* ---------- modal ---------- */
+  .scrim{position:fixed; inset:0; background:rgba(21,28,38,.42); backdrop-filter:blur(2px); z-index:60; display:none; align-items:flex-start; justify-content:center; padding:5vh 16px 40px; overflow-y:auto}
+  .scrim.open{display:flex}
+  .modal{width:min(620px,100%); background:var(--surface); border-radius:14px; box-shadow:0 24px 60px rgba(21,28,38,.28); overflow:hidden}
+  .modal-head{display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--line)}
+  .modal-head h2{margin:0; font-family:var(--disp); font-size:16px; font-weight:600}
+  .modal-head .jid{font-family:var(--mono); font-size:11px; color:var(--muted); margin-top:2px}
+  .modal-body{padding:18px 20px; display:flex; flex-direction:column; gap:16px}
+  .modal-foot{display:flex; align-items:center; gap:10px; padding:14px 20px; border-top:1px solid var(--line); background:var(--paper)}
+  .modal-foot .spacer{flex:1}
+
+  .field label{display:block; font-size:12px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; letter-spacing:.2px}
+  .field label .opt{font-weight:400; color:var(--muted)}
+  .input,.textarea,.selectbox{
+    width:100%; border:1px solid var(--line-strong); border-radius:8px; padding:9px 11px; font-size:14px;
+    background:var(--surface); color:var(--ink); outline:0;
+  }
+  .input:focus,.textarea:focus,.selectbox:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .textarea{resize:vertical; min-height:74px; line-height:1.5}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .row3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+
+  .prio{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .toggle{
+    border:1px solid var(--line-strong); border-radius:8px; padding:10px 12px; display:flex; align-items:center;
+    justify-content:space-between; gap:8px; user-select:none;
+  }
+  .toggle span{font-size:13px; font-weight:500}
+  .toggle small{display:block; color:var(--muted); font-size:11px; font-weight:400; font-family:var(--mono)}
+  .sw{width:38px; height:22px; border-radius:99px; background:var(--line-strong); position:relative; flex:0 0 auto; transition:background .15s}
+  .sw::after{content:""; position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.2); transition:left .15s}
+  .toggle.on .sw{background:var(--accent)}
+  .toggle.on.urgent .sw{background:var(--alarm)}
+  .toggle.on .sw::after{left:18px}
+
+  .labelpick{display:flex; flex-wrap:wrap; gap:7px}
+  .lp{border:1px solid var(--line); background:var(--surface); border-radius:999px; padding:5px 11px; font-size:12px; display:inline-flex; align-items:center; gap:6px; color:var(--ink-soft)}
+  .lp .cdot{width:9px; height:9px; border-radius:50%}
+  .lp.sel{border-color:var(--ink); background:var(--ink); color:#fff}
+
+  .statuspick{display:flex; flex-wrap:wrap; gap:7px}
+  .sp{border:1px solid var(--line-strong); border-radius:7px; padding:6px 11px; font-size:12px; font-family:var(--mono); font-weight:500; background:var(--surface); color:var(--ink-soft); text-transform:uppercase; letter-spacing:.3px}
+  .sp.sel.st-todo{background:var(--paper); color:var(--ink); border-color:var(--ink-soft)}
+  .sp.sel.st-doing{background:var(--accent-soft); color:var(--accent); border-color:var(--accent)}
+  .sp.sel.st-pending{background:var(--warn-soft); color:var(--warn); border-color:var(--warn)}
+  .sp.sel.st-blocked{background:var(--alarm-soft); color:var(--alarm); border-color:var(--alarm)}
+  .sp.sel.st-done{background:var(--ok-soft); color:var(--ok); border-color:var(--ok)}
+
+  .rangewrap{display:flex; align-items:center; gap:12px}
+  .rangewrap input[type=range]{flex:1; accent-color:var(--accent)}
+  .rangewrap .pct{font-family:var(--mono); font-size:13px; font-weight:600; min-width:44px; text-align:right}
+
+  .files{display:flex; flex-direction:column; gap:7px}
+  .filerow{display:flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-size:12.5px}
+  .filerow .fn{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .filerow .fs{font-family:var(--mono); color:var(--muted); font-size:11px}
+  .filerow a{color:var(--accent); text-decoration:none; font-weight:600}
+  .filerow .rm{color:var(--alarm); border:0; background:transparent; font-size:16px; line-height:1; padding:2px}
+  .dropzone{
+    border:1.5px dashed var(--line-strong); border-radius:8px; padding:14px; text-align:center; color:var(--muted);
+    font-size:12.5px; cursor:pointer;
+  }
+  .dropzone:hover{border-color:var(--accent); color:var(--accent)}
+
+  /* label manager */
+  .lm-list{display:flex; flex-direction:column; gap:8px}
+  .lm-row{display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:8px; padding:8px 10px}
+  .lm-row input[type=color]{width:30px; height:30px; border:1px solid var(--line); border-radius:6px; padding:0; background:none; cursor:pointer}
+  .lm-row input[type=text]{flex:1; border:1px solid var(--line); border-radius:6px; padding:7px 9px; font-size:13px; outline:0}
+  .lm-row input[type=text]:focus{border-color:var(--accent)}
+  .lm-row .del{color:var(--alarm); border:0; background:transparent; padding:4px 8px; border-radius:6px; font-size:13px}
+  .lm-row .del:hover{background:var(--alarm-soft)}
+
+  .toast{
+    position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+    background:var(--ink); color:#fff; font-size:13px; padding:10px 16px; border-radius:8px; z-index:80;
+    transition:opacity .2s, transform .2s; pointer-events:none;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+  .notif-hint{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px}
+
+  @media (max-width:720px){
+    .matrix{grid-template-columns:1fr}
+    .row2,.row3,.prio{grid-template-columns:1fr}
+    .topbar-inner{padding:10px 14px}
+    .controls,.board-wrap,.reminders{padding-left:14px; padding-right:14px}
+    .brand small{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="mark">GA·OPS</span>
+        <div>
+          <h1>工作調度板</h1>
+          <small>Work Dispatch Board</small>
+        </div>
+      </div>
+      <nav class="tabs" id="tabs"></nav>
+      <button class="btn primary" id="addTaskBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        新增工作
+      </button>
+    </div>
+  </header>
+
+  <div class="reminders" id="reminders"></div>
+
+  <div class="controls">
+    <div class="seg" id="viewSeg">
+      <button data-view="matrix" class="on">四象限 Matrix</button>
+      <button data-view="category">類別 Category</button>
+    </div>
+    <div class="filters">
+      <div class="search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input id="search" placeholder="搜尋工作…">
+      </div>
+      <select class="selpill" id="filterStatus">
+        <option value="">全部狀態</option>
+        <option value="todo">未開始</option>
+        <option value="doing">進行中</option>
+        <option value="pending">待處理/未到</option>
+        <option value="blocked">卡住</option>
+        <option value="done">已完成</option>
+      </select>
+      <label class="selpill" style="display:inline-flex;align-items:center;gap:6px;cursor:pointer">
+        <input type="checkbox" id="hideDone"> 隱藏已完成
+      </label>
+    </div>
+    <button class="btn sm" id="mgrLabels">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.6 13.4 12 22l-8.6-8.6a2 2 0 0 1 0-2.8L11 3.4A2 2 0 0 1 12.4 3H20a2 2 0 0 1 2 2v7.6a2 2 0 0 1-.6 1.4Z"/><circle cx="16.5" cy="7.5" r="1.2" fill="currentColor"/></svg>
+      編輯類別 Labels
+    </button>
+    <button class="btn sm ghost" id="bellBtn" title="開啟到期通知">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+    </button>
+  </div>
+
+  <main class="board-wrap">
+    <div id="board"></div>
+  </main>
+
+  <!-- Task modal -->
+  <div class="scrim" id="taskScrim">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div>
+          <h2 id="taskModalTitle">新增工作</h2>
+          <div class="jid" id="taskJid"></div>
+        </div>
+        <button class="btn ghost" id="taskClose" aria-label="關閉">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>工作標題 Title</label>
+          <input class="input" id="fTitle" placeholder="例如：三樓男廁漏水維修 / 冷氣招標">
+        </div>
+
+        <div class="field">
+          <label>類別 Category label</label>
+          <div class="labelpick" id="fLabels"></div>
+        </div>
+
+        <div class="field">
+          <label>優先次序 Priority <span class="opt">— 決定落喺邊個象限</span></label>
+          <div class="prio">
+            <div class="toggle urgent" id="fUrgent"><div><span>緊急 Urgent</span><small>time-critical</small></div><div class="sw"></div></div>
+            <div class="toggle" id="fImportant"><div><span>重要 Important</span><small>high-impact</small></div><div class="sw"></div></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>狀態 Status</label>
+          <div class="statuspick" id="fStatus"></div>
+        </div>
+
+        <div class="field">
+          <label>進度 Progress</label>
+          <div class="rangewrap">
+            <input type="range" id="fProgress" min="0" max="100" step="5" value="0">
+            <span class="pct" id="fProgressPct">0%</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>到期 / 提醒 Due date <span class="opt">— 到期會喺頂部提示，並可推送通知</span></label>
+          <input class="input" id="fDue" type="datetime-local">
+        </div>
+
+        <div class="field">
+          <label>備註 Notes</label>
+          <textarea class="textarea" id="fNotes" placeholder="承辦商、報價、聯絡人、跟進事項…"></textarea>
+        </div>
+
+        <div class="field">
+          <label>附件 Files <span class="opt">— 報價單、相片、圖則（單檔 &lt; 4MB）</span></label>
+          <div class="dropzone" id="fDrop">按此上載檔案，或拖曳到此</div>
+          <input type="file" id="fFileInput" multiple hidden>
+          <div class="files" id="fFileList" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="taskDelete" style="color:var(--alarm);border-color:var(--alarm)">刪除</button>
+        <div class="spacer"></div>
+        <button class="btn" id="taskCancel">取消</button>
+        <button class="btn primary" id="taskSave">儲存工作</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Label manager modal -->
+  <div class="scrim" id="labelScrim">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div><h2>編輯類別 Labels</h2><div class="jid" id="labelSecName"></div></div>
+        <button class="btn ghost" id="labelClose" aria-label="關閉">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin:0;color:var(--muted);font-size:12.5px">呢啲類別只屬於目前 section。改名、換色、加減都得。已用緊嘅類別若被刪，相關工作會變成「未分類」。</p>
+        <div class="lm-list" id="lmList"></div>
+        <button class="btn sm" id="lmAdd" style="align-self:flex-start">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> 新增類別
+        </button>
+      </div>
+      <div class="modal-foot">
+        <div class="spacer"></div>
+        <button class="btn" id="labelCancel">取消</button>
+        <button class="btn primary" id="labelSaveBtn">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section modal -->
+  <div class="scrim" id="secScrim">
+    <div class="modal" style="width:min(440px,100%)" role="dialog" aria-modal="true">
+      <div class="modal-head"><h2 id="secModalTitle">新增分頁 Section</h2><button class="btn ghost" id="secClose">✕</button></div>
+      <div class="modal-body">
+        <div class="field">
+          <label>分頁名稱 Section name</label>
+          <input class="input" id="fSecName" placeholder="例如：經濟科教學、CCA、行政雜項">
+        </div>
+        <p style="margin:0;color:var(--muted);font-size:12px">每個分頁有自己嘅類別 labels 同工作清單，功能一模一樣（四象限 / 類別切換、狀態、備註、附件、提醒）。</p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="secDelete" style="color:var(--alarm);border-color:var(--alarm)">刪除分頁</button>
+        <div class="spacer"></div>
+        <button class="btn" id="secCancel">取消</button>
+        <button class="btn primary" id="secSave">儲存</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   Storage layer — prefers window.storage (persists across
+   sessions), falls back to in-memory so the app still works.
+   ============================================================ */
+const mem = new Map();
+const hasStore = typeof window !== 'undefined' && window.storage && typeof window.storage.get === 'function';
+const store = {
+  async get(k){
+    if(hasStore){ try{ const r = await window.storage.get(k,false); return r ? r.value : null; }catch(e){ return null; } }
+    return mem.has(k) ? mem.get(k) : null;
+  },
+  async set(k,v){
+    if(hasStore){ try{ await window.storage.set(k,v,false); return true; }catch(e){ mem.set(k,v); return false; } }
+    mem.set(k,v); return true;
+  },
+  async del(k){
+    if(hasStore){ try{ await window.storage.delete(k,false); }catch(e){} }
+    mem.delete(k);
+  }
+};
+const DATA_KEY = 'wt:data:v1';
+const FILE_KEY = id => 'wt:file:'+id;
+
+/* ============================================================
+   Defaults
+   ============================================================ */
+const uid = () => Math.random().toString(36).slice(2,9);
+const STATUSES = [
+  {id:'todo',    label:'未開始 Not started', cls:'st-todo'},
+  {id:'doing',   label:'進行中 In progress',  cls:'st-doing'},
+  {id:'pending', label:'待處理/未到 Pending', cls:'st-pending'},
+  {id:'blocked', label:'卡住 Blocked',        cls:'st-blocked'},
+  {id:'done',    label:'已完成 Done',          cls:'st-done'},
+];
+const stMeta = id => STATUSES.find(s=>s.id===id) || STATUSES[0];
+
+function defaultData(){
+  const gaLabels = [
+    {id:uid(), name:'Major repairs (ing)',            color:'#b3261e'},
+    {id:uid(), name:'Major repairs (pending)',        color:'#e8894b'},
+    {id:uid(), name:'Emergency repairs (ing)',        color:'#d81b60'},
+    {id:uid(), name:'Emergency repairs (pending)',    color:'#f06292'},
+    {id:uid(), name:'Tender (ing)',                   color:'#6a3fb5'},
+    {id:uid(), name:'Tender (planning)',              color:'#9d7ad4'},
+    {id:uid(), name:'Construction work (ing)',        color:'#1565c0'},
+    {id:uid(), name:'Construction work (upcoming)',   color:'#4dabf5'},
+    {id:uid(), name:'School stuff repairs',           color:'#2e7d55'},
+    {id:uid(), name:'Contact / to-do list',           color:'#00897b'},
+  ];
+  const teachLabels = [
+    {id:uid(), name:'備課 Lesson prep',        color:'#1565c0'},
+    {id:uid(), name:'Past paper analysis',     color:'#6a3fb5'},
+    {id:uid(), name:'批改 Marking',            color:'#b3261e'},
+    {id:uid(), name:'教材製作 Materials',       color:'#2e7d55'},
+    {id:uid(), name:'Student follow-up',       color:'#e8894b'},
+    {id:uid(), name:'科務 Admin',              color:'#6b7480'},
+  ];
+  const s1 = uid(), s2 = uid();
+  return {
+    version:1,
+    seq:1,
+    currentSection:s1,
+    sections:[
+      {id:s1, name:'總務組 General Affairs', prefix:'GA', labels:gaLabels},
+      {id:s2, name:'經濟科教學 Economics', prefix:'EC', labels:teachLabels},
+    ],
+    tasks:[]
+  };
+}
+
+/* ============================================================
+   State
+   ============================================================ */
+let data = null;
+let view = 'matrix';
+let filter = {q:'', status:'', hideDone:false};
+let editingId = null;
+let draftFiles = [];          // files staged in the open task modal
+let notified = new Set();     // task ids notified this session
+
+/* ---- persistence ---- */
+let saveTimer=null;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=> store.set(DATA_KEY, JSON.stringify(data)), 250);
+}
+
+async function load(){
+  const raw = await store.get(DATA_KEY);
+  if(raw){ try{ data = JSON.parse(raw); }catch(e){ data = defaultData(); } }
+  else { data = defaultData(); await store.set(DATA_KEY, JSON.stringify(data)); }
+  if(!data.sections.find(s=>s.id===data.currentSection)) data.currentSection = data.sections[0]?.id;
+}
+
+/* ============================================================
+   Helpers
+   ============================================================ */
+const $ = s => document.querySelector(s);
+const esc = s => (s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const curSection = () => data.sections.find(s=>s.id===data.currentSection);
+const labelById = (sec,id) => sec.labels.find(l=>l.id===id);
+const sectionTasks = () => data.tasks.filter(t=>t.sectionId===data.currentSection);
+function fmtSize(b){ if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(0)+' KB'; return (b/1048576).toFixed(1)+' MB'; }
+function fmtDue(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const sameYear = d.getFullYear()===now.getFullYear();
+  const opt = {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:false};
+  if(!sameYear) opt.year='numeric';
+  return d.toLocaleString('zh-HK',opt).replace(',', '');
+}
+function dueState(iso, status){
+  if(!iso || status==='done') return '';
+  const diff = new Date(iso) - new Date();
+  if(diff < 0) return 'over';
+  if(diff < 24*3600*1000) return 'soon';
+  return '';
+}
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),1800);
+}
+
+/* ============================================================
+   Render — tabs, board, reminders
+   ============================================================ */
+function render(){
+  renderTabs();
+  renderBoard();
+  renderReminders();
+}
+
+function renderTabs(){
+  const tabs = $('#tabs'); tabs.innerHTML='';
+  data.sections.forEach(sec=>{
+    const cnt = data.tasks.filter(t=>t.sectionId===sec.id && t.status!=='done').length;
+    const b = document.createElement('button');
+    b.className = 'tab'+(sec.id===data.currentSection?' active':'');
+    b.innerHTML = `${esc(sec.name)} <span class="cnt">${cnt}</span>`;
+    b.onclick = ()=>{ data.currentSection=sec.id; save(); render(); };
+    b.ondblclick = ()=> openSection(sec.id);
+    tabs.appendChild(b);
+  });
+  const add = document.createElement('button');
+  add.className='tab addsec';
+  add.innerHTML='+ 分頁';
+  add.title='新增分頁（雙擊現有分頁可改名/刪除）';
+  add.onclick = ()=> openSection(null);
+  tabs.appendChild(add);
+}
+
+function passFilter(t){
+  if(filter.hideDone && t.status==='done') return false;
+  if(filter.status && t.status!==filter.status) return false;
+  if(filter.q){
+    const q = filter.q.toLowerCase();
+    if(!((t.title||'').toLowerCase().includes(q) || (t.notes||'').toLowerCase().includes(q))) return false;
+  }
+  return true;
+}
+
+function ticketHTML(t){
+  const sec = curSection();
+  const lab = labelById(sec, t.labelId);
+  const st = stMeta(t.status);
+  const ds = dueState(t.due, t.status);
+  const quadName = t.urgent && t.important ? '緊急·重要'
+    : (t.important ? '重要·唔緊急' : (t.urgent ? '緊急·唔重要' : '唔緊急·唔重要'));
+  const bar = lab ? lab.color : 'var(--line-strong)';
+  const labChip = lab ? `<span class="chip" style="background:${lab.color}18;color:${lab.color}"><span class="cdot" style="background:${lab.color}"></span>${esc(lab.name)}</span>` : '';
+  const fileTag = (t.files&&t.files.length) ? `<span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.4 11.05 12.25 20.2a5 5 0 0 1-7.07-7.07l9.19-9.19a3 3 0 0 1 4.24 4.24l-9.2 9.19a1 1 0 0 1-1.41-1.41l8.48-8.49"/></svg>${t.files.length}</span>` : '';
+  const dueTag = t.due ? `<span class="m ${ds==='over'?'due-over':ds==='soon'?'due-soon':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${esc(fmtDue(t.due))}</span>` : '';
+  const notesTag = t.notes ? `<span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span>` : '';
+  return `<div class="ticket${t.status==='done'?' is-done':''}" data-id="${t.id}">
+    <span class="barcode" style="background:${bar}"></span>
+    <div class="ticket-top">
+      <span class="jid">${esc(t.jid||'')}</span>
+      <span class="status-stamp ${st.cls}">${st.label.split(' ')[0]}</span>
+    </div>
+    <div class="title">${esc(t.title||'（未命名）')}</div>
+    <div class="chips">
+      ${labChip}
+      <span class="chip quad">${quadName}</span>
+    </div>
+    <div class="progress"><i style="width:${t.progress||0}%"></i></div>
+    <div class="ticket-meta">${dueTag}${fileTag}${notesTag}<span class="m" style="margin-left:auto">${t.progress||0}%</span></div>
+  </div>`;
+}
+
+function renderBoard(){
+  const board = $('#board');
+  const list = sectionTasks().filter(passFilter);
+  if(view==='matrix') board.innerHTML = matrixHTML(list);
+  else board.innerHTML = categoryHTML(list);
+  board.querySelectorAll('.ticket').forEach(el=>{
+    el.onclick = ()=> openTask(el.dataset.id);
+  });
+}
+
+function matrixHTML(list){
+  const quads = [
+    {cls:'q1', key:t=>t.urgent&&t.important,   title:'即刻做 Do first',  sub:'緊急 · 重要'},
+    {cls:'q2', key:t=>!t.urgent&&t.important,  title:'排程 Schedule',    sub:'重要 · 唔緊急'},
+    {cls:'q3', key:t=>t.urgent&&!t.important,  title:'快手處理 Delegate', sub:'緊急 · 唔重要'},
+    {cls:'q4', key:t=>!t.urgent&&!t.important, title:'有空先算 Later',    sub:'唔緊急 · 唔重要'},
+  ];
+  return `<div class="matrix">${quads.map(q=>{
+    const items = list.filter(q.key);
+    return `<section class="quad ${q.cls}">
+      <div class="quad-head">
+        <div class="qtag"><span class="qdot"></span><div><h2>${q.title}</h2><div class="qsub">${q.sub}</div></div></div>
+        <span class="qcnt">${items.length}</span>
+      </div>
+      <div class="quad-body">
+        ${items.length? items.map(ticketHTML).join('') : `<div class="empty"><b>暫無工作</b>此象限未有項目</div>`}
+      </div>
+    </section>`;
+  }).join('')}</div>`;
+}
+
+function categoryHTML(list){
+  const sec = curSection();
+  const cols = sec.labels.map(l=>({label:l, items:list.filter(t=>t.labelId===l.id)}));
+  const unlabeled = list.filter(t=>!labelById(sec,t.labelId));
+  const colHTML = (name,color,items) => `<section class="cat">
+    <div class="cat-head"><span class="swatch" style="background:${color}"></span><h2>${esc(name)}</h2><span class="qcnt">${items.length}</span></div>
+    <div class="cat-body${items.length?'':' is-empty'}">${items.length? items.map(ticketHTML).join('') : `<div class="empty">此類別暫無工作</div>`}</div>
+  </section>`;
+  let html = cols.map(c=>colHTML(c.label.name,c.label.color,c.items)).join('');
+  if(unlabeled.length) html += colHTML('未分類 No label','var(--line-strong)',unlabeled);
+  return `<div class="cats">${html || '<div class="empty">此分頁未有類別，先按「編輯類別」加返幾個。</div>'}</div>`;
+}
+
+function renderReminders(){
+  const box = $('#reminders'); box.innerHTML='';
+  const now = new Date();
+  const over=[], soon=[];
+  data.tasks.forEach(t=>{
+    if(!t.due || t.status==='done') return;
+    const diff = new Date(t.due)-now;
+    if(diff<0) over.push(t);
+    else if(diff < 24*3600*1000) soon.push(t);
+  });
+  const chip = t => {
+    const sec = data.sections.find(s=>s.id===t.sectionId);
+    return `<span class="rem-chip" data-id="${t.id}" data-sec="${t.sectionId}">${esc(t.title||'（未命名）')} <span class="due">${esc(fmtDue(t.due))}</span> <span style="color:var(--muted);font-size:10px">${esc(sec?sec.prefix:'')}</span></span>`;
+  };
+  if(over.length){
+    box.innerHTML += `<div class="rem-card"><span class="bell"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></span>
+      <div class="rem-body"><h3>已逾期 ${over.length} 項</h3><div class="rem-list">${over.map(chip).join('')}</div></div></div>`;
+  }
+  if(soon.length){
+    box.innerHTML += `<div class="rem-card soft"><span class="bell"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+      <div class="rem-body"><h3>24 小時內到期 ${soon.length} 項</h3><div class="rem-list">${soon.map(chip).join('')}</div></div></div>`;
+  }
+  box.querySelectorAll('.rem-chip').forEach(el=>{
+    el.onclick = ()=>{ data.currentSection = el.dataset.sec; save(); render(); openTask(el.dataset.id); };
+  });
+}
+
+/* ============================================================
+   Task modal
+   ============================================================ */
+let modalState = {labelId:null, urgent:false, important:false, status:'todo'};
+
+function renderLabelPicker(){
+  const sec = curSection(); const box=$('#fLabels');
+  box.innerHTML = sec.labels.map(l=>
+    `<button type="button" class="lp${modalState.labelId===l.id?' sel':''}" data-id="${l.id}"><span class="cdot" style="background:${l.color}"></span>${esc(l.name)}</button>`
+  ).join('') || '<span style="color:var(--muted);font-size:12px">未有類別，先去「編輯類別」加。</span>';
+  box.querySelectorAll('.lp').forEach(b=> b.onclick=()=>{ modalState.labelId = (modalState.labelId===b.dataset.id?null:b.dataset.id); renderLabelPicker(); });
+}
+function renderStatusPicker(){
+  const box=$('#fStatus');
+  box.innerHTML = STATUSES.map(s=>`<button type="button" class="sp ${s.cls}${modalState.status===s.id?' sel':''}" data-id="${s.id}">${s.label.split(' ')[0]}</button>`).join('');
+  box.querySelectorAll('.sp').forEach(b=> b.onclick=()=>{
+    modalState.status=b.dataset.id;
+    if(b.dataset.id==='done'){ $('#fProgress').value=100; $('#fProgressPct').textContent='100%'; }
+    renderStatusPicker();
+  });
+}
+function syncToggle(id, on, isUrgent){
+  const el=$(id); el.classList.toggle('on', on); if(isUrgent) el.classList.toggle('urgent', true);
+}
+function renderFileList(){
+  const box=$('#fFileList');
+  box.innerHTML = draftFiles.map((f,i)=>
+    `<div class="filerow"><span class="fn">${esc(f.name)}</span><span class="fs">${fmtSize(f.size)}</span>
+      ${f.dataUrl?`<a href="${f.dataUrl}" download="${esc(f.name)}">下載</a>`:''}
+      <button class="rm" data-i="${i}" title="移除">✕</button></div>`
+  ).join('');
+  box.querySelectorAll('.rm').forEach(b=> b.onclick=()=>{ draftFiles.splice(+b.dataset.i,1); renderFileList(); });
+}
+
+function openTask(id){
+  editingId = id || null;
+  const sec = curSection();
+  let t;
+  if(id){ t = data.tasks.find(x=>x.id===id); }
+  if(t){
+    $('#taskModalTitle').textContent='編輯工作';
+    $('#taskJid').textContent = t.jid||'';
+    $('#fTitle').value=t.title||'';
+    $('#fNotes').value=t.notes||'';
+    $('#fDue').value=t.due? toLocalInput(t.due):'';
+    $('#fProgress').value=t.progress||0; $('#fProgressPct').textContent=(t.progress||0)+'%';
+    modalState={labelId:t.labelId||null, urgent:!!t.urgent, important:!!t.important, status:t.status||'todo'};
+    draftFiles = (t.files||[]).map(f=>({...f}));
+    $('#taskDelete').style.display='';
+  } else {
+    $('#taskModalTitle').textContent='新增工作';
+    $('#taskJid').textContent = sec.prefix+'-'+String(data.seq).padStart(4,'0');
+    $('#fTitle').value=''; $('#fNotes').value=''; $('#fDue').value='';
+    $('#fProgress').value=0; $('#fProgressPct').textContent='0%';
+    modalState={labelId:null, urgent:false, important:false, status:'todo'};
+    draftFiles=[];
+    $('#taskDelete').style.display='none';
+  }
+  syncToggle('#fUrgent', modalState.urgent, true);
+  syncToggle('#fImportant', modalState.important, false);
+  renderLabelPicker(); renderStatusPicker(); renderFileList();
+  $('#taskScrim').classList.add('open');
+  setTimeout(()=>$('#fTitle').focus(),40);
+}
+function closeTask(){ $('#taskScrim').classList.remove('open'); editingId=null; draftFiles=[]; }
+
+function toLocalInput(iso){
+  const d=new Date(iso); const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+async function saveTask(){
+  const title = $('#fTitle').value.trim();
+  if(!title){ toast('請輸入工作標題'); $('#fTitle').focus(); return; }
+  const dueVal = $('#fDue').value ? new Date($('#fDue').value).toISOString() : '';
+  const progress = +$('#fProgress').value;
+
+  // persist files: store base64 in their own keys; keep meta on the task
+  const fileMeta=[];
+  for(const f of draftFiles){
+    if(f.dataUrl && !f.saved){
+      await store.set(FILE_KEY(f.id), f.dataUrl);
+      f.saved=true;
+    }
+    fileMeta.push({id:f.id, name:f.name, size:f.size, type:f.type, dataUrl:f.dataUrl, saved:true});
+  }
+
+  if(editingId){
+    const t = data.tasks.find(x=>x.id===editingId);
+    // clean up removed files
+    const keepIds = new Set(fileMeta.map(f=>f.id));
+    (t.files||[]).forEach(f=>{ if(!keepIds.has(f.id)) store.del(FILE_KEY(f.id)); });
+    Object.assign(t,{title, labelId:modalState.labelId, urgent:modalState.urgent, important:modalState.important,
+      status:modalState.status, progress, due:dueVal, notes:$('#fNotes').value.trim(), files:fileMeta, updated:Date.now()});
+    toast('已更新工作');
+  } else {
+    const jid = curSection().prefix+'-'+String(data.seq).padStart(4,'0');
+    data.seq++;
+    data.tasks.push({id:uid(), jid, sectionId:data.currentSection, title, labelId:modalState.labelId,
+      urgent:modalState.urgent, important:modalState.important, status:modalState.status, progress,
+      due:dueVal, notes:$('#fNotes').value.trim(), files:fileMeta, created:Date.now(), updated:Date.now()});
+    toast('已新增工作');
+  }
+  save(); closeTask(); render();
+}
+
+async function deleteTask(){
+  if(!editingId) return;
+  const t = data.tasks.find(x=>x.id===editingId);
+  if(!confirm('確定刪除「'+(t.title||'此工作')+'」？此動作無法復原。')) return;
+  (t.files||[]).forEach(f=> store.del(FILE_KEY(f.id)));
+  data.tasks = data.tasks.filter(x=>x.id!==editingId);
+  save(); closeTask(); render(); toast('已刪除');
+}
+
+/* file input handling */
+function handleFiles(fileList){
+  const arr=[...fileList];
+  arr.forEach(file=>{
+    if(file.size > 4*1024*1024){ toast('「'+file.name+'」超過 4MB，未能上載'); return; }
+    const reader=new FileReader();
+    reader.onload = e=>{
+      draftFiles.push({id:uid(), name:file.name, size:file.size, type:file.type, dataUrl:e.target.result, saved:false});
+      renderFileList();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ============================================================
+   Label manager
+   ============================================================ */
+let lmDraft=[];
+function openLabelMgr(){
+  const sec=curSection();
+  $('#labelSecName').textContent = sec.name;
+  lmDraft = sec.labels.map(l=>({...l}));
+  renderLM();
+  $('#labelScrim').classList.add('open');
+}
+function renderLM(){
+  const box=$('#lmList');
+  box.innerHTML = lmDraft.map((l,i)=>
+    `<div class="lm-row">
+      <input type="color" value="${l.color}" data-i="${i}" data-k="color">
+      <input type="text" value="${esc(l.name)}" data-i="${i}" data-k="name" placeholder="類別名稱">
+      <button class="del" data-i="${i}" title="刪除">刪除</button>
+    </div>`
+  ).join('') || '<div class="empty">未有類別，按下面新增。</div>';
+  box.querySelectorAll('input').forEach(inp=> inp.oninput=()=>{ lmDraft[+inp.dataset.i][inp.dataset.k]=inp.value; });
+  box.querySelectorAll('.del').forEach(b=> b.onclick=()=>{ lmDraft.splice(+b.dataset.i,1); renderLM(); });
+}
+function saveLabels(){
+  const sec=curSection();
+  sec.labels = lmDraft.filter(l=>l.name.trim()).map(l=>({id:l.id||uid(), name:l.name.trim(), color:l.color}));
+  save(); $('#labelScrim').classList.remove('open'); render(); toast('類別已更新');
+}
+
+/* ============================================================
+   Section manager
+   ============================================================ */
+let secEditId=null;
+function openSection(id){
+  secEditId=id;
+  if(id){
+    const s=data.sections.find(x=>x.id===id);
+    $('#secModalTitle').textContent='編輯分頁 Section';
+    $('#fSecName').value=s.name;
+    $('#secDelete').style.display = data.sections.length>1 ? '' : 'none';
+  } else {
+    $('#secModalTitle').textContent='新增分頁 Section';
+    $('#fSecName').value='';
+    $('#secDelete').style.display='none';
+  }
+  $('#secScrim').classList.add('open');
+  setTimeout(()=>$('#fSecName').focus(),40);
+}
+function saveSection(){
+  const name=$('#fSecName').value.trim();
+  if(!name){ toast('請輸入分頁名稱'); return; }
+  if(secEditId){
+    data.sections.find(x=>x.id===secEditId).name=name;
+  } else {
+    const prefix = (name.replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase() || 'SX');
+    const id=uid();
+    data.sections.push({id, name, prefix, labels:[
+      {id:uid(),name:'To-do',color:'#1565c0'},
+      {id:uid(),name:'進行中 In progress',color:'#e8894b'},
+      {id:uid(),name:'跟進 Follow-up',color:'#2e7d55'},
+    ]});
+    data.currentSection=id;
+  }
+  save(); $('#secScrim').classList.remove('open'); render(); toast('已儲存分頁');
+}
+function deleteSection(){
+  if(!secEditId || data.sections.length<=1) return;
+  const s=data.sections.find(x=>x.id===secEditId);
+  const n = data.tasks.filter(t=>t.sectionId===secEditId).length;
+  if(!confirm('刪除分頁「'+s.name+'」會一併刪除其中 '+n+' 項工作，無法復原。確定？')) return;
+  data.tasks.filter(t=>t.sectionId===secEditId).forEach(t=>(t.files||[]).forEach(f=>store.del(FILE_KEY(f.id))));
+  data.tasks = data.tasks.filter(t=>t.sectionId!==secEditId);
+  data.sections = data.sections.filter(x=>x.id!==secEditId);
+  if(data.currentSection===secEditId) data.currentSection=data.sections[0].id;
+  save(); $('#secScrim').classList.remove('open'); render(); toast('已刪除分頁');
+}
+
+/* ============================================================
+   Reminders / notifications
+   ============================================================ */
+function checkReminders(){
+  renderReminders();
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  const now=new Date();
+  data.tasks.forEach(t=>{
+    if(!t.due || t.status==='done' || notified.has(t.id)) return;
+    const diff=new Date(t.due)-now;
+    if(diff < 24*3600*1000){          // overdue or within 24h
+      const sec=data.sections.find(s=>s.id===t.sectionId);
+      const when = diff<0 ? '已逾期' : '快到期';
+      try{
+        new Notification(`${when}：${t.title||'工作'}`,{
+          body:`${sec?sec.name:''} · ${fmtDue(t.due)}`,
+          tag:t.id
+        });
+      }catch(e){}
+      notified.add(t.id);
+    }
+  });
+}
+async function enableNotifications(){
+  if(!('Notification' in window)){ toast('此瀏覽器唔支援通知'); return; }
+  if(Notification.permission==='granted'){ toast('到期通知已開啟'); checkReminders(); return; }
+  if(Notification.permission==='denied'){ toast('通知已被封鎖，請喺瀏覽器設定重新允許'); return; }
+  const p = await Notification.requestPermission();
+  if(p==='granted'){ toast('到期通知已開啟'); checkReminders(); }
+  else toast('未開啟通知');
+}
+
+/* ============================================================
+   Wire up events
+   ============================================================ */
+function bind(){
+  $('#addTaskBtn').onclick = ()=> openTask(null);
+  $('#taskClose').onclick = closeTask;
+  $('#taskCancel').onclick = closeTask;
+  $('#taskSave').onclick = saveTask;
+  $('#taskDelete').onclick = deleteTask;
+
+  $('#fUrgent').onclick = ()=>{ modalState.urgent=!modalState.urgent; syncToggle('#fUrgent',modalState.urgent,true); };
+  $('#fImportant').onclick = ()=>{ modalState.important=!modalState.important; syncToggle('#fImportant',modalState.important,false); };
+  $('#fProgress').oninput = e=>{ $('#fProgressPct').textContent=e.target.value+'%'; };
+
+  $('#fDrop').onclick = ()=> $('#fFileInput').click();
+  $('#fFileInput').onchange = e=>{ handleFiles(e.target.files); e.target.value=''; };
+  const dz=$('#fDrop');
+  ['dragover','dragenter'].forEach(ev=> dz.addEventListener(ev,e=>{e.preventDefault(); dz.style.borderColor='var(--accent)';}));
+  ['dragleave','drop'].forEach(ev=> dz.addEventListener(ev,e=>{e.preventDefault(); dz.style.borderColor='';}));
+  dz.addEventListener('drop', e=>{ if(e.dataTransfer.files) handleFiles(e.dataTransfer.files); });
+
+  $('#viewSeg').querySelectorAll('button').forEach(b=> b.onclick=()=>{
+    view=b.dataset.view;
+    $('#viewSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+    renderBoard();
+  });
+  $('#search').oninput = e=>{ filter.q=e.target.value.trim(); renderBoard(); };
+  $('#filterStatus').onchange = e=>{ filter.status=e.target.value; renderBoard(); };
+  $('#hideDone').onchange = e=>{ filter.hideDone=e.target.checked; renderBoard(); };
+
+  $('#mgrLabels').onclick = openLabelMgr;
+  $('#labelClose').onclick = ()=> $('#labelScrim').classList.remove('open');
+  $('#labelCancel').onclick = ()=> $('#labelScrim').classList.remove('open');
+  $('#lmAdd').onclick = ()=>{ lmDraft.push({id:uid(),name:'',color:'#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}); renderLM(); };
+  $('#labelSaveBtn').onclick = saveLabels;
+
+  $('#secClose').onclick = ()=> $('#secScrim').classList.remove('open');
+  $('#secCancel').onclick = ()=> $('#secScrim').classList.remove('open');
+  $('#secSave').onclick = saveSection;
+  $('#secDelete').onclick = deleteSection;
+
+  $('#bellBtn').onclick = enableNotifications;
+
+  // click scrim background to close
+  document.querySelectorAll('.scrim').forEach(sc=> sc.addEventListener('mousedown', e=>{ if(e.target===sc) sc.classList.remove('open'); }));
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') document.querySelectorAll('.scrim.open').forEach(s=>s.classList.remove('open')); });
+
+  // reflect notif state on bell
+  if('Notification' in window && Notification.permission==='granted') $('#bellBtn').style.color='var(--accent)';
+}
+
+/* ============================================================
+   Boot
+   ============================================================ */
+(async function(){
+  await load();
+  bind();
+  render();
+  checkReminders();
+  setInterval(checkReminders, 60*1000);
+})();
+</script>
+</body>
+</html>
