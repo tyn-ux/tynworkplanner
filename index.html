@@ -1,165 +1,256 @@
 <!doctype html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-theme="pro" data-density="comfy">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#EDE9E0">
+<meta name="theme-color" content="#F5F6F8">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="工作記事">
 <title>工作記事 · Work Notes</title>
+<script>
+/* 喺畫面出現之前套用主題，避免閃一下舊顏色 */
+try{var u=JSON.parse(localStorage.getItem('wn:ui')||'{}');document.documentElement.dataset.theme=u.theme||'pro';document.documentElement.dataset.density=u.density||'comfy'}catch(e){}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
-  :root{
-    /* 生成り — unbleached cotton, the MUJI ground */
-    --paper:#EDE9E0;
-    --paper-2:#E4DFD4;
-    --card:#FCFAF6;
-    --line:#DCD5C8;
-    --line-2:#C6BDAB;
-    --ink:#33302B;
-    --ink-2:#5A554C;
-    --muted:#8D8778;
-    --accent:#7B2E2E;        /* MUJI red — used sparingly */
-    --kraft:#C3A87F;
-    --st-todo:#8D8778;
-    --st-doing:#41607A;
-    --st-pending:#9A7526;
-    --st-blocked:#8E3B2E;
-    --st-done:#6B7A55;
-    --r:4px;
+  /* ══════════════ themes ══════════════
+     每個主題只改顏色、圓角、字體。版面同功能一樣。 */
+  :root, [data-theme="pro"]{
+    --paper:#F5F6F8; --paper-2:#EBEDF1; --card:#FFFFFF;
+    --line:#E4E7EC; --line-2:#D0D5DD;
+    --ink:#101828; --ink-2:#475467; --muted:#667085;
+    --accent:#C4320A; --brand:#1F4E8C; --brand-ink:#FFFFFF; --brand-soft:#EAF1FB;
+    --st-todo:#667085; --st-doing:#1F6FB2; --st-pending:#B54708; --st-blocked:#B42318; --st-done:#067647;
+    --r:10px; --r-sm:6px;
+    --shadow:0 1px 2px rgba(16,24,40,.05); --shadow-2:0 4px 12px rgba(16,24,40,.08); --shadow-lg:0 20px 48px rgba(16,24,40,.18);
+    --sans:'Inter','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+    --head:var(--sans);
     --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
-    --sans:'Zen Kaku Gothic New','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+    --scrim:rgba(16,24,40,.42);
   }
+  [data-theme="muji"]{
+    --paper:#EDE9E0; --paper-2:#E4DFD4; --card:#FCFAF6;
+    --line:#DCD5C8; --line-2:#C6BDAB;
+    --ink:#33302B; --ink-2:#5A554C; --muted:#7F796B;
+    --accent:#7B2E2E; --brand:#33302B; --brand-ink:#FCFAF6; --brand-soft:#E4DFD4;
+    --st-todo:#8D8778; --st-doing:#41607A; --st-pending:#9A7526; --st-blocked:#8E3B2E; --st-done:#6B7A55;
+    --r:4px; --r-sm:2px;
+    --shadow:0 1px 0 rgba(51,48,43,.04); --shadow-2:0 2px 6px rgba(51,48,43,.08); --shadow-lg:0 20px 50px rgba(51,48,43,.22);
+    --sans:'Zen Kaku Gothic New','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+    --head:var(--sans);
+    --scrim:rgba(51,48,43,.36);
+  }
+  [data-theme="night"]{
+    --paper:#0E131D; --paper-2:#182131; --card:#151C29;
+    --line:#243049; --line-2:#33405A;
+    --ink:#E7EBF3; --ink-2:#B0B9CA; --muted:#8994AA;
+    --accent:#F2795D; --brand:#6EA8FF; --brand-ink:#0B1220; --brand-soft:#1B2A45;
+    --st-todo:#8994AA; --st-doing:#6EA8FF; --st-pending:#E5B562; --st-blocked:#F2795D; --st-done:#5CC98B;
+    --r:10px; --r-sm:6px;
+    --shadow:0 1px 2px rgba(0,0,0,.3); --shadow-2:0 4px 14px rgba(0,0,0,.35); --shadow-lg:0 20px 48px rgba(0,0,0,.5);
+    --sans:'Inter','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+    --head:var(--sans);
+    --scrim:rgba(0,0,0,.55);
+  }
+  [data-theme="sage"]{
+    --paper:#F2F4EF; --paper-2:#E6EAE0; --card:#FFFFFD;
+    --line:#DDE2D4; --line-2:#C5CCB8;
+    --ink:#1C2820; --ink-2:#48584C; --muted:#68766B;
+    --accent:#A63D2F; --brand:#2F5D46; --brand-ink:#FFFFFF; --brand-soft:#E2ECE4;
+    --st-todo:#68766B; --st-doing:#2F6A8A; --st-pending:#9A6B12; --st-blocked:#A63D2F; --st-done:#2F7A4C;
+    --r:8px; --r-sm:5px;
+    --shadow:0 1px 2px rgba(28,40,32,.05); --shadow-2:0 4px 12px rgba(28,40,32,.08); --shadow-lg:0 20px 48px rgba(28,40,32,.18);
+    --sans:'Inter','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+    --head:var(--sans);
+    --scrim:rgba(28,40,32,.4);
+  }
+  [data-theme="academic"]{
+    --paper:#F7F4EE; --paper-2:#EEE8DD; --card:#FFFFFF;
+    --line:#E6DFD3; --line-2:#CFC5B4;
+    --ink:#1D1B18; --ink-2:#4D463C; --muted:#756C5F;
+    --accent:#8B1E2D; --brand:#8B1E2D; --brand-ink:#FFFFFF; --brand-soft:#F5E8E8;
+    --st-todo:#756C5F; --st-doing:#2D5B83; --st-pending:#9A6A14; --st-blocked:#8B1E2D; --st-done:#3F6E43;
+    --r:6px; --r-sm:4px;
+    --shadow:0 1px 2px rgba(29,27,24,.05); --shadow-2:0 4px 12px rgba(29,27,24,.08); --shadow-lg:0 20px 48px rgba(29,27,24,.2);
+    --sans:'Inter','Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+    --head:'Noto Serif TC','Songti TC',Georgia,serif;
+    --scrim:rgba(29,27,24,.4);
+  }
+
   *{box-sizing:border-box}
   html,body{margin:0; min-height:100%}
-  body{font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.6; -webkit-font-smoothing:antialiased; font-size:14px}
-  button{font-family:inherit; cursor:pointer}
-  input,textarea,select{font-family:inherit; font-size:14px}
-  ::selection{background:var(--paper-2)}
-  .lbl{font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); font-weight:500}
+  body{font-family:var(--sans); color:var(--ink); background:var(--paper); line-height:1.55; -webkit-font-smoothing:antialiased; font-size:14px}
+  button{font-family:inherit; cursor:pointer; color:inherit}
+  input,textarea,select{font-family:inherit; font-size:14px; color:var(--ink)}
+  ::selection{background:var(--brand-soft)}
+  :focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+  .lbl{font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:600}
+  svg{flex:0 0 auto}
 
   /* ── header ── */
-  header.top{background:var(--card); border-bottom:1px solid var(--line)}
-  .top-in{max-width:1240px; margin:0 auto; padding:14px 22px; display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+  header.top{background:var(--card); border-bottom:1px solid var(--line); position:sticky; top:0; z-index:40}
+  .top-in{max-width:1480px; margin:0 auto; padding:12px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap}
   .logo{display:flex; align-items:center; gap:10px}
-  .logo .sq{width:30px; height:30px; background:var(--accent); color:#fff; border-radius:2px; display:grid; place-items:center; font-size:14px; font-weight:500}
-  .logo h1{margin:0; font-size:15px; font-weight:500; letter-spacing:.05em}
-  .logo .sub{font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:.1em}
+  .logo .sq{width:32px; height:32px; background:var(--brand); color:var(--brand-ink); border-radius:var(--r-sm); display:grid; place-items:center; font-size:15px; font-weight:700}
+  .logo h1{margin:0; font-family:var(--head); font-size:15.5px; font-weight:700; letter-spacing:.02em; line-height:1.2}
+  .logo .sub{font-family:var(--mono); font-size:9.5px; color:var(--muted); letter-spacing:.14em}
 
-  nav.tabs{display:flex; gap:2px; flex:1; flex-wrap:wrap; min-width:180px}
-  .tab{background:transparent; border:1px solid transparent; border-radius:2px; padding:6px 12px; font-size:13px; color:var(--ink-2); display:flex; align-items:center; gap:8px}
-  .tab .n{font-family:var(--mono); font-size:10px; color:var(--muted)}
-  .tab:hover{background:var(--paper)}
-  .tab.on{background:var(--paper-2); color:var(--ink); border-color:var(--line-2)}
-  .tab.on .n{color:var(--ink-2)}
-  .tab.new{color:var(--muted); border:1px dashed var(--line-2)}
+  nav.tabs{display:flex; gap:4px; flex:0 1 auto; flex-wrap:wrap; min-width:0; padding:3px; background:var(--paper); border-radius:calc(var(--r-sm) + 3px)}
+  .tab{white-space:nowrap; background:transparent; border:0; border-radius:var(--r-sm); padding:6px 12px; font-size:13px; font-weight:500; color:var(--ink-2); display:flex; align-items:center; gap:8px}
+  .tab .n{font-family:var(--mono); font-size:10.5px; color:var(--muted); background:var(--paper-2); border-radius:20px; padding:0 6px; min-width:20px; text-align:center}
+  .tab:hover{color:var(--ink)}
+  .tab.on{background:var(--card); color:var(--ink); box-shadow:var(--shadow-2)}
+  .tab.on .n{background:var(--brand-soft); color:var(--brand)}
+  .tab.new{color:var(--muted); padding:6px 10px}
+  .grow{flex:1}
 
-  .btn{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line-2); background:var(--card); color:var(--ink); border-radius:2px; padding:7px 13px; font-size:13px}
+  .btn{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line-2); background:var(--card); color:var(--ink); border-radius:var(--r-sm); padding:7px 13px; font-size:13px; font-weight:500; white-space:nowrap}
   .btn:hover{background:var(--paper); border-color:var(--ink-2)}
-  .btn.solid{background:var(--ink); border-color:var(--ink); color:var(--card)}
-  .btn.solid:hover{background:#000}
-  .btn.q{border-color:transparent; background:transparent; color:var(--muted); padding:7px 9px}
+  .btn.solid{background:var(--brand); border-color:var(--brand); color:var(--brand-ink); box-shadow:var(--shadow)}
+  .btn.solid:hover{filter:brightness(1.08)}
+  .btn.q{border-color:transparent; background:transparent; color:var(--ink-2); padding:7px 9px}
   .btn.q:hover{background:var(--paper); color:var(--ink)}
   .btn.sm{padding:5px 10px; font-size:12px}
-  .btn svg{width:14px; height:14px}
+  .btn svg{width:15px; height:15px}
 
   /* ── alerts ── */
-  .alerts{max-width:1240px; margin:0 auto; padding:0 22px}
-  .alert{margin-top:14px; border:1px solid var(--line-2); border-left:3px solid var(--accent); background:var(--card); border-radius:2px; padding:11px 14px}
+  .alerts{max-width:1480px; margin:0 auto; padding:0 24px}
+  .alert{margin-top:14px; border:1px solid var(--line); border-left:3px solid var(--accent); background:var(--card); border-radius:var(--r-sm); padding:10px 14px; box-shadow:var(--shadow); display:flex; gap:12px; align-items:baseline; flex-wrap:wrap}
   .alert.soon{border-left-color:var(--st-pending)}
-  .alert h3{margin:0 0 6px; font-size:12px; font-weight:500; letter-spacing:.05em}
+  .alert h3{margin:0; font-size:12.5px; font-weight:600; white-space:nowrap}
   .alert .row{display:flex; flex-wrap:wrap; gap:6px}
-  .pill{font-size:12px; background:var(--paper); border:1px solid var(--line); border-radius:2px; padding:3px 9px; display:inline-flex; gap:7px; align-items:center; cursor:pointer}
+  .pill{font-size:12px; background:var(--paper); border:1px solid var(--line); border-radius:20px; padding:2px 10px; display:inline-flex; gap:7px; align-items:center; cursor:pointer}
   .pill:hover{border-color:var(--ink-2)}
   .pill em{font-style:normal; font-family:var(--mono); font-size:10.5px; color:var(--accent)}
 
+  /* ── shell: board + today ── */
+  .shell{max-width:1480px; margin:0 auto; padding:0 24px; display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:24px; align-items:start}
+  .mainc{min-width:0}
+
   /* ── controls ── */
-  .ctrl{max-width:1240px; margin:0 auto; padding:18px 22px 0; display:flex; gap:12px; align-items:center; flex-wrap:wrap}
-  .seg{display:inline-flex; border:1px solid var(--line-2); border-radius:2px; overflow:hidden; background:var(--card)}
-  .seg button{border:0; border-right:1px solid var(--line); background:transparent; padding:7px 15px; font-size:13px; color:var(--ink-2)}
-  .seg button:last-child{border-right:0}
-  .seg button.on{background:var(--ink); color:var(--card)}
-  .find{display:flex; align-items:center; gap:7px; border:1px solid var(--line-2); background:var(--card); border-radius:2px; padding:5px 10px; min-width:170px}
+  .ctrl{padding:18px 0 0; display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+  .seg{display:inline-flex; padding:3px; gap:2px; border:1px solid var(--line); border-radius:calc(var(--r-sm) + 3px); background:var(--card)}
+  .seg button{border:0; border-radius:var(--r-sm); background:transparent; padding:6px 13px; font-size:13px; font-weight:500; color:var(--ink-2)}
+  .seg button:hover{color:var(--ink); background:var(--paper)}
+  .seg button.on{background:var(--brand); color:var(--brand-ink)}
+  .find{display:flex; align-items:center; gap:7px; border:1px solid var(--line-2); background:var(--card); border-radius:var(--r-sm); padding:6px 10px; min-width:160px}
   .find input{border:0; outline:0; background:transparent; width:100%; font-size:13px}
-  .find svg{color:var(--muted); flex:0 0 auto}
-  select.pillsel, label.pillsel{border:1px solid var(--line-2); background:var(--card); border-radius:2px; padding:6px 10px; font-size:12.5px; color:var(--ink-2)}
+  .find svg{color:var(--muted)}
+  select.pillsel, label.pillsel{border:1px solid var(--line-2); background:var(--card); border-radius:var(--r-sm); padding:6px 10px; font-size:12.5px; color:var(--ink-2)}
   label.pillsel{display:inline-flex; align-items:center; gap:6px; cursor:pointer}
   .spacer{flex:1}
+  .wknav{display:inline-flex; align-items:center; gap:4px}
+  .wknav b{font-size:13px; font-weight:600; min-width:118px; text-align:center; font-family:var(--mono)}
+
+  /* ── quick add ── */
+  .quick{margin-top:14px; display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line-2); border-radius:var(--r); padding:6px 6px 6px 14px; box-shadow:var(--shadow)}
+  .quick:focus-within{border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-soft)}
+  .quick svg{color:var(--muted); width:16px; height:16px}
+  .quick input[type=text]{flex:1; border:0; outline:0; background:transparent; font-size:14px; padding:6px 0; min-width:0}
+  .quick label{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-2); white-space:nowrap; cursor:pointer}
+  .qhint{font-size:11.5px; color:var(--muted); margin:6px 2px 0}
+  .qhint code{font-family:var(--mono); background:var(--paper-2); border-radius:4px; padding:0 4px; font-size:11px; color:var(--ink-2)}
 
   /* ── board ── */
-  main{max-width:1240px; margin:0 auto; padding:18px 22px 140px}
-
+  main{padding:18px 0 140px}
   .matrix{display:grid; grid-template-columns:1fr 1fr; gap:16px}
-  .panel{background:var(--card); border:1px solid var(--line); border-radius:var(--r)}
-  .p-head{display:flex; align-items:center; gap:10px; padding:12px 15px; border-bottom:1px solid var(--line)}
-  .p-head .swatch{width:10px; height:10px; border-radius:2px; flex:0 0 auto}
-  .p-head h2{margin:0; font-size:13px; font-weight:500; letter-spacing:.03em}
+  .panel{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); overflow:hidden}
+  .p-head{display:flex; align-items:center; gap:10px; padding:12px 15px; border-bottom:1px solid var(--line); border-top:3px solid var(--sw,var(--line-2))}
+  .p-head .swatch{width:10px; height:10px; border-radius:50%; flex:0 0 auto}
+  .p-head h2{margin:0; font-family:var(--head); font-size:14px; font-weight:600}
   .p-head .sub{font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:.08em}
-  .p-head .n{margin-left:auto; font-family:var(--mono); font-size:12px; color:var(--muted)}
-  .p-body{padding:12px; display:grid; gap:10px}
+  .p-head .n{margin-left:auto; font-family:var(--mono); font-size:11.5px; color:var(--ink-2); background:var(--paper); border-radius:20px; padding:1px 9px}
+  .p-body{padding:12px; display:grid; gap:10px; background:color-mix(in srgb,var(--paper) 45%,var(--card))}
   .matrix .p-body{grid-template-columns:1fr}
   .stack{display:flex; flex-direction:column; gap:16px}
   .stack .p-body{grid-template-columns:repeat(auto-fill,minmax(248px,1fr)); align-content:start}
 
   /* ── job card ── */
-  .job{
-    position:relative; background:var(--card); border:1px solid var(--line-2); border-radius:var(--r);
-    padding:12px 13px 12px 42px; cursor:pointer; box-shadow:0 1px 0 rgba(51,48,43,.04);
-    transition:border-color .12s, box-shadow .12s, opacity .2s;
-  }
-  .job:hover{border-color:var(--ink-2); box-shadow:0 2px 6px rgba(51,48,43,.08)}
-  .job .tape{position:absolute; left:0; top:-1px; bottom:-1px; width:4px; border-radius:var(--r) 0 0 var(--r); background:var(--line-2)}
-  .job .idx{
-    position:absolute; left:14px; top:11px; font-family:var(--mono); font-size:15px; font-weight:500;
-    color:var(--muted); line-height:1; letter-spacing:-.02em;
-  }
-  .job .tick{
-    position:absolute; left:13px; bottom:12px; width:18px; height:18px; border:1.5px solid var(--line-2);
-    border-radius:50%; background:var(--card); display:grid; place-items:center; padding:0;
-  }
-  .job .tick svg{width:11px; height:11px; color:transparent}
-  .job .tick:hover{border-color:var(--st-done)}
-  .job .tick:hover svg{color:var(--line-2)}
-  .job.done{opacity:.45}
-  .job.done .tick{background:var(--st-done); border-color:var(--st-done)}
-  .job.done .tick svg{color:#fff}
-  .job.done .title{text-decoration:line-through; text-decoration-thickness:1px; color:var(--ink-2)}
+  .job{position:relative; background:var(--card); border:1px solid var(--line); border-radius:var(--r-sm);
+    padding:12px 40px 12px 42px; cursor:pointer; box-shadow:var(--shadow); transition:border-color .12s, box-shadow .12s, opacity .2s}
+  .job:hover{border-color:var(--line-2); box-shadow:var(--shadow-2)}
+  .job .tape{position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--line-2)}
+  .job .idx{position:absolute; left:15px; top:12px; font-family:var(--mono); font-size:13px; font-weight:500; color:var(--muted); line-height:1}
+  .tick{width:18px; height:18px; border:1.5px solid var(--line-2); border-radius:50%; background:var(--card); display:grid; place-items:center; padding:0}
+  .tick svg{width:11px; height:11px; color:transparent}
+  .tick:hover{border-color:var(--st-done)}
+  .tick:hover svg{color:var(--line-2)}
+  .job .tick{position:absolute; left:13px; bottom:12px}
+  .job.done{opacity:.5}
+  .done > .tick, .done .tk, .td-item.done .tick{background:var(--st-done); border-color:var(--st-done)}
+  .done > .tick svg, .done .tk svg, .td-item.done .tick svg{color:#fff}
+  .job.done .title{text-decoration:line-through; color:var(--ink-2)}
   .job .code{font-family:var(--mono); font-size:9.5px; color:var(--muted); letter-spacing:.08em}
-  .job .title{font-size:14px; font-weight:500; line-height:1.45; margin:2px 0 8px}
+  .job .title{font-size:14px; font-weight:600; line-height:1.45; margin:2px 0 8px}
+  .sun{position:absolute; right:9px; top:9px; width:26px; height:26px; border-radius:var(--r-sm); border:1px solid transparent; background:transparent; color:var(--muted); display:grid; place-items:center; padding:0}
+  .sun svg{width:15px; height:15px}
+  .sun:hover{background:var(--paper); color:var(--ink)}
+  .sun.on{color:#C98A00; background:#FFF6DB; border-color:#F3DA8C}
+  [data-theme="night"] .sun.on{background:#3A3016; border-color:#6B5620; color:#F5C451}
   .tags{display:flex; flex-wrap:wrap; gap:5px; align-items:center}
-  .tag{font-size:10.5px; padding:2px 7px; border-radius:2px; display:inline-flex; align-items:center; gap:5px; white-space:nowrap; border:1px solid}
+  .tag{font-size:10.5px; font-weight:500; padding:2px 8px; border-radius:20px; display:inline-flex; align-items:center; gap:5px; white-space:nowrap; border:1px solid}
   .tag .d{width:6px; height:6px; border-radius:50%}
   .tag.quad{border-color:var(--line); color:var(--ink-2); background:var(--paper)}
-  .tag.st{font-family:var(--mono); letter-spacing:.05em}
-  .bar{height:3px; background:var(--paper-2); margin-top:10px; border-radius:2px; overflow:hidden}
-  .bar i{display:block; height:100%; background:var(--ink-2)}
+  .tag.st{font-family:var(--mono); letter-spacing:.03em}
+  .bar{height:4px; background:var(--paper-2); margin-top:10px; border-radius:4px; overflow:hidden}
+  .bar i{display:block; height:100%; background:var(--brand); border-radius:4px}
   .foot{display:flex; align-items:center; gap:11px; margin-top:8px; font-family:var(--mono); font-size:10.5px; color:var(--muted)}
   .foot .m{display:inline-flex; align-items:center; gap:4px}
   .foot svg{width:11px; height:11px}
-  .foot .over{color:var(--accent)}
-  .foot .soon{color:var(--st-pending)}
+  .foot .over{color:var(--accent); font-weight:500}
+  .foot .soon{color:var(--st-pending); font-weight:500}
   .foot .pct{margin-left:auto}
+  .none{padding:22px; text-align:center; color:var(--muted); font-size:12.5px; border:1px dashed var(--line-2); border-radius:var(--r-sm); grid-column:1/-1}
 
-  .none{padding:22px; text-align:center; color:var(--muted); font-size:12.5px; border:1px dashed var(--line); border-radius:var(--r); grid-column:1/-1}
+  [data-density="compact"] .job{padding:8px 36px 8px 38px}
+  [data-density="compact"] .job .title{font-size:13px; margin:0 0 5px}
+  [data-density="compact"] .job .bar{margin-top:6px}
+  [data-density="compact"] .job .foot{margin-top:5px}
+  [data-density="compact"] .job .idx{left:12px; top:9px}
+  [data-density="compact"] .job .tick{left:10px; bottom:8px}
+  [data-density="compact"] .p-body{padding:8px; gap:7px}
+  [data-density="compact"] .p-head{padding:9px 13px}
+
+  /* ── week ── */
+  .week{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:8px}
+  .day{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); min-height:220px; display:flex; flex-direction:column; overflow:hidden}
+  .day.wkend{background:color-mix(in srgb,var(--paper) 60%,var(--card))}
+  .day .dh{white-space:nowrap; display:flex; align-items:baseline; gap:6px; padding:9px 10px; border-bottom:1px solid var(--line)}
+  .day .dh b{font-family:var(--head); font-size:13px; font-weight:600}
+  .day .dh span{font-family:var(--mono); font-size:11px; color:var(--muted)}
+  .day .dh em{margin-left:auto; font-style:normal; font-family:var(--mono); font-size:10.5px; color:var(--ink-2); background:var(--paper); border-radius:20px; padding:0 7px}
+  .day.is-today{border-color:var(--brand); box-shadow:0 0 0 1px var(--brand), var(--shadow-2)}
+  .day.is-today .dh{background:var(--brand); color:var(--brand-ink); border-bottom-color:var(--brand)}
+  .day.is-today .dh span{color:var(--brand-ink); opacity:.8}
+  .day .dl{padding:7px; display:flex; flex-direction:column; gap:6px; flex:1}
+  .dnone{color:var(--line-2); text-align:center; font-size:12px; padding:10px 0}
+  .wk{position:relative; display:flex; gap:7px; align-items:flex-start; border:1px solid var(--line); border-left:3px solid var(--c); border-radius:var(--r-sm); padding:6px 6px 6px 7px; background:var(--card); cursor:pointer; font-size:12.5px}
+  .wk:hover{box-shadow:var(--shadow-2)}
+  .wk .tk{width:16px; height:16px; border:1.5px solid var(--line-2); border-radius:50%; background:var(--card); display:grid; place-items:center; padding:0; margin-top:1px}
+  .wk .tk svg{width:9px; height:9px; color:transparent}
+  .wk .wb{flex:1; min-width:0}
+  .wk .wt{font-weight:600; line-height:1.35; word-break:break-word}
+  .wk .wm{font-family:var(--mono); font-size:10px; color:var(--muted); margin-top:3px; display:flex; align-items:center; gap:4px}
+  .wk.done{opacity:.5} .wk.done .wt{text-decoration:line-through}
+  .wk .sun{position:static; width:20px; height:20px; margin-left:auto}
+  .wk .sun svg{width:13px; height:13px}
+  .wk-foot{margin-top:12px; font-size:12px; color:var(--muted)}
 
   /* ── overview ── */
   .ov-list{display:flex; flex-direction:column; gap:9px}
   .ov-sec{margin-top:22px}
   .ov-sec:first-child{margin-top:0}
   .ov-sec > .hd{display:flex; align-items:baseline; gap:10px; padding-bottom:8px; border-bottom:1px solid var(--line-2); margin-bottom:12px}
-  .ov-sec > .hd h2{margin:0; font-size:14px; font-weight:500; letter-spacing:.04em}
+  .ov-sec > .hd h2{margin:0; font-family:var(--head); font-size:15px; font-weight:600}
   .ov-sec > .hd .n{font-family:var(--mono); font-size:11px; color:var(--muted)}
-  .tablewrap{background:var(--card); border:1px solid var(--line); border-radius:var(--r); overflow-x:auto}
+  .tablewrap{background:var(--card); border:1px solid var(--line); border-radius:var(--r); overflow-x:auto; box-shadow:var(--shadow)}
   table.ov{width:100%; border-collapse:collapse; font-size:12.5px; min-width:840px}
-  table.ov th{
-    text-align:left; font-weight:500; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
-    color:var(--muted); padding:11px 12px; border-bottom:1px solid var(--line-2); white-space:nowrap; background:var(--card);
-  }
+  table.ov th{text-align:left; font-weight:600; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding:11px 12px; border-bottom:1px solid var(--line-2); white-space:nowrap; background:var(--paper)}
   table.ov td{padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:middle}
   table.ov tr:last-child td{border-bottom:0}
   table.ov tbody tr{cursor:pointer}
@@ -167,91 +258,173 @@
   table.ov tr.done td{opacity:.45}
   table.ov tr.done .t{text-decoration:line-through}
   table.ov td.num{font-family:var(--mono); color:var(--muted); width:34px}
-  table.ov td.t{font-weight:500; min-width:200px}
+  table.ov td.t{font-weight:600; min-width:200px}
   table.ov td.mono{font-family:var(--mono); font-size:11px; white-space:nowrap}
-  .minibar{width:52px; height:3px; background:var(--paper-2); border-radius:2px; display:inline-block; vertical-align:middle; margin-right:6px; overflow:hidden}
-  .minibar i{display:block; height:100%; background:var(--ink-2)}
+  .minibar{width:52px; height:4px; background:var(--paper-2); border-radius:4px; display:inline-block; vertical-align:middle; margin-right:6px; overflow:hidden}
+  .minibar i{display:block; height:100%; background:var(--brand)}
   .tickcell{width:28px}
   .tickcell button{width:17px; height:17px; border:1.5px solid var(--line-2); border-radius:50%; background:var(--card); display:grid; place-items:center; padding:0}
   .tickcell button svg{width:10px; height:10px; color:transparent}
   tr.done .tickcell button{background:var(--st-done); border-color:var(--st-done)}
   tr.done .tickcell button svg{color:#fff}
 
+  /* ── today panel ── */
+  aside.today{position:sticky; top:76px; margin-top:18px; max-height:calc(100vh - 96px); display:flex; flex-direction:column;
+    background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow-2); overflow:hidden}
+  .td-head{padding:15px 16px 12px; display:flex; align-items:flex-start; gap:10px; border-bottom:1px solid var(--line)}
+  .td-head h2{margin:2px 0 0; font-family:var(--head); font-size:18px; font-weight:700; line-height:1.2}
+  .td-count{margin-left:auto; text-align:right}
+  .td-count b{display:block; font-family:var(--mono); font-size:20px; font-weight:500; line-height:1.1; color:var(--brand)}
+  .td-count span{font-size:10.5px; color:var(--muted)}
+  .td-close{display:none}
+  .td-prog{height:4px; background:var(--paper-2)}
+  .td-prog i{display:block; height:100%; background:var(--st-done); transition:width .3s}
+  .td-scroll{overflow-y:auto; flex:1; padding:10px 12px 14px}
+  .td-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px}
+  .td-item{display:flex; align-items:flex-start; gap:8px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-sm); padding:8px 8px 8px 4px; transition:box-shadow .12s}
+  .td-item:hover{box-shadow:var(--shadow-2); border-color:var(--line-2)}
+  .td-item.drag{opacity:.4}
+  .td-item.over-top{box-shadow:0 -2px 0 var(--brand)}
+  .td-item.over-bot{box-shadow:0 2px 0 var(--brand)}
+  .td-item .grip{cursor:grab; color:var(--line-2); padding:2px 0; display:flex}
+  .td-item .grip svg{width:14px; height:14px}
+  .td-item .no{font-family:var(--mono); font-size:12px; font-weight:500; color:var(--brand); min-width:16px; padding-top:1px}
+  .td-item .tick{margin-top:1px}
+  .td-item .tb{flex:1; min-width:0; cursor:pointer}
+  .td-item .tt{font-size:13px; font-weight:600; line-height:1.4; word-break:break-word}
+  .td-item .tm{font-size:10.5px; color:var(--muted); font-family:var(--mono); margin-top:2px; display:flex; gap:6px; flex-wrap:wrap}
+  .td-item .tm .over{color:var(--accent)}
+  .td-item.done .tt{text-decoration:line-through; color:var(--muted)}
+  .td-item .ops{display:flex; gap:1px; opacity:0; transition:opacity .12s}
+  .td-item:hover .ops, .td-item:focus-within .ops{opacity:1}
+  .td-item .ops button{border:0; background:transparent; color:var(--muted); width:22px; height:18px; display:grid; place-items:center; padding:0; border-radius:4px}
+  .td-item .ops button:hover{background:var(--paper); color:var(--ink)}
+  .td-item .ops svg{width:12px; height:12px}
+  .td-empty{border:1px dashed var(--line-2); border-radius:var(--r-sm); padding:16px 14px; font-size:12.5px; color:var(--muted); line-height:1.6; text-align:center}
+  .td-add{margin-top:10px; display:flex; gap:6px}
+  .td-add input{flex:1; min-width:0; border:1px solid var(--line-2); border-radius:var(--r-sm); padding:7px 10px; font-size:13px; outline:0; background:var(--card)}
+  .td-add input:focus{border-color:var(--brand)}
+  .td-sug{margin-top:16px}
+  .td-sug .lbl{margin-bottom:7px; display:block}
+  .sg{display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:var(--r-sm); font-size:12.5px; cursor:pointer}
+  .sg:hover{background:var(--paper)}
+  .sg .why{font-size:10px; font-weight:600; padding:1px 6px; border-radius:20px; white-space:nowrap; border:1px solid currentColor}
+  .sg .why.w0{color:var(--accent)} .sg .why.w1{color:var(--st-pending)} .sg .why.w2{color:var(--brand)} .sg .why.w3{color:var(--ink-2)}
+  .sg .st{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .sg .plus{border:1px solid var(--line-2); background:var(--card); border-radius:var(--r-sm); width:24px; height:24px; display:grid; place-items:center; padding:0; color:var(--brand)}
+  .sg .plus svg{width:13px; height:13px}
+  .td-foot{display:flex; gap:6px; margin-top:12px}
+
+  .today-fab{display:none; position:fixed; right:16px; bottom:16px; z-index:55; align-items:center; gap:8px; background:var(--brand); color:var(--brand-ink); border:0; border-radius:40px; padding:11px 18px; font-size:14px; font-weight:600; box-shadow:var(--shadow-lg)}
+  .today-fab svg{width:17px; height:17px}
+  .today-fab b{background:var(--brand-ink); color:var(--brand); border-radius:20px; padding:0 7px; font-size:12px; font-family:var(--mono)}
+
   /* ── mascot ── */
-  .mascot{position:fixed; right:22px; bottom:22px; z-index:50; display:flex; align-items:flex-end; gap:10px}
-  .bubble{
-    max-width:280px; background:var(--card); border:1px solid var(--line-2); border-radius:var(--r);
-    padding:13px 15px; box-shadow:0 4px 16px rgba(51,48,43,.10); position:relative;
-  }
-  .bubble:after{content:""; position:absolute; right:-6px; bottom:26px; width:10px; height:10px; background:var(--card); border-right:1px solid var(--line-2); border-top:1px solid var(--line-2); transform:rotate(45deg)}
-  .bubble .q{font-size:13px; line-height:1.65; color:var(--ink)}
-  .bubble .a{margin-top:7px; font-size:10.5px; color:var(--muted); font-family:var(--mono); letter-spacing:.03em}
-  .bubble .x{position:absolute; top:4px; right:6px; border:0; background:none; color:var(--line-2); font-size:14px; line-height:1; padding:2px}
-  .bubble .x:hover{color:var(--ink-2)}
-  .fatboy{background:none; border:0; padding:0; width:78px; flex:0 0 auto; filter:drop-shadow(0 3px 8px rgba(51,48,43,.14))}
+  .mascot{position:fixed; left:20px; bottom:20px; z-index:50; display:flex; align-items:flex-end; gap:10px}
+  .no-mascot .mascot{display:none}
+  .bubble{order:2; max-width:280px; background:var(--card); border:1px solid var(--line-2); border-radius:var(--r); padding:13px 15px; box-shadow:var(--shadow-2); position:relative}
+  .bubble:after{content:""; position:absolute; left:-6px; bottom:26px; width:10px; height:10px; background:var(--card); border-left:1px solid var(--line-2); border-bottom:1px solid var(--line-2); transform:rotate(45deg)}
+  .bubble .q{font-size:13px; line-height:1.65; color:var(--ink); padding-right:10px}
+  .bubble .a{margin-top:7px; font-size:10.5px; color:var(--muted); font-family:var(--mono)}
+  .bubble .x{position:absolute; top:4px; right:6px; border:0; background:none; color:var(--muted); font-size:14px; line-height:1; padding:2px}
+  .fatboy{order:1; background:none; border:0; padding:0; width:70px; filter:drop-shadow(0 3px 8px rgba(0,0,0,.14))}
   .fatboy svg{display:block; width:100%; height:auto}
   .fatboy .body{transform-origin:50% 90%; animation:breathe 4.5s ease-in-out infinite}
   @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
   .mascot.hidden .bubble{display:none}
 
   /* ── modal ── */
-  .scrim{position:fixed; inset:0; background:rgba(51,48,43,.36); z-index:70; display:none; align-items:flex-start; justify-content:center; padding:4vh 16px 40px; overflow-y:auto}
+  .scrim{position:fixed; inset:0; background:var(--scrim); z-index:70; display:none; align-items:flex-start; justify-content:center; padding:5vh 16px 40px; overflow-y:auto; backdrop-filter:blur(2px)}
   .scrim.open{display:flex}
-  .modal{width:min(600px,100%); background:var(--card); border:1px solid var(--line-2); border-radius:var(--r); box-shadow:0 20px 50px rgba(51,48,43,.22)}
+  .modal{width:min(620px,100%); background:var(--card); border:1px solid var(--line); border-radius:calc(var(--r) + 2px); box-shadow:var(--shadow-lg); overflow:hidden}
   .m-head{display:flex; align-items:flex-start; justify-content:space-between; padding:16px 20px; border-bottom:1px solid var(--line)}
-  .m-head h2{margin:0; font-size:15px; font-weight:500; letter-spacing:.04em}
+  .m-head h2{margin:0; font-family:var(--head); font-size:16px; font-weight:700}
   .m-head .code{font-family:var(--mono); font-size:10px; color:var(--muted); letter-spacing:.1em}
   .m-body{padding:20px; display:flex; flex-direction:column; gap:17px}
-  .m-foot{display:flex; align-items:center; gap:9px; padding:14px 20px; border-top:1px solid var(--line); background:var(--paper)}
+  .m-foot{display:flex; align-items:center; gap:9px; padding:13px 20px; border-top:1px solid var(--line); background:var(--paper)}
   .f label{display:block; margin-bottom:6px}
-  .f .hint{font-size:11px; color:var(--muted); margin-top:5px; line-height:1.5}
-  .in,.ta,.sel{width:100%; border:1px solid var(--line-2); border-radius:2px; padding:8px 10px; background:var(--card); color:var(--ink); outline:0}
-  .in:focus,.ta:focus{border-color:var(--ink)}
+  .f .hint{font-size:11.5px; color:var(--muted); margin-top:5px; line-height:1.5}
+  .in,.ta,.sel{width:100%; border:1px solid var(--line-2); border-radius:var(--r-sm); padding:8px 10px; background:var(--card); color:var(--ink); outline:0}
+  .in:focus,.ta:focus,.sel:focus{border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-soft)}
   .ta{resize:vertical; min-height:70px; line-height:1.6}
   .two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-  .tog{border:1px solid var(--line-2); border-radius:2px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; user-select:none; background:var(--card)}
-  .tog b{font-weight:500; font-size:13px; display:block}
+  .tog{border:1px solid var(--line-2); border-radius:var(--r-sm); padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; user-select:none; background:var(--card); cursor:pointer}
+  .tog b{font-weight:600; font-size:13px; display:block}
   .tog small{color:var(--muted); font-family:var(--mono); font-size:10px; letter-spacing:.06em}
   .sw{width:34px; height:19px; border-radius:19px; background:var(--line-2); position:relative; flex:0 0 auto; transition:background .15s}
-  .sw:after{content:""; position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background:var(--card); transition:left .15s}
-  .tog.on .sw{background:var(--ink-2)} .tog.on.u .sw{background:var(--accent)} .tog.on .sw:after{left:17px}
+  .sw:after{content:""; position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background:#fff; transition:left .15s; box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .tog.on .sw{background:var(--brand)} .tog.on.u .sw{background:var(--accent)} .tog.on .sw:after{left:17px}
   .picks{display:flex; flex-wrap:wrap; gap:6px}
-  .pk{border:1px solid var(--line); background:var(--card); border-radius:2px; padding:5px 10px; font-size:12px; color:var(--ink-2); display:inline-flex; align-items:center; gap:6px}
+  .pk{border:1px solid var(--line); background:var(--card); border-radius:20px; padding:5px 11px; font-size:12px; color:var(--ink-2); display:inline-flex; align-items:center; gap:6px}
   .pk .d{width:8px; height:8px; border-radius:50%}
-  .pk.on{border-color:var(--ink); background:var(--ink); color:var(--card)}
-  .pk.sto{font-family:var(--mono); font-size:11px; letter-spacing:.05em}
+  .pk.on{border-color:var(--brand); background:var(--brand); color:var(--brand-ink)}
+  .pk.sto{font-family:var(--mono); font-size:11px}
   .rng{display:flex; align-items:center; gap:12px}
-  .rng input{flex:1; accent-color:var(--ink-2)}
+  .rng input{flex:1; accent-color:var(--brand)}
   .rng b{font-family:var(--mono); font-weight:500; min-width:42px; text-align:right}
-  .drop{border:1px dashed var(--line-2); border-radius:2px; padding:13px; text-align:center; color:var(--muted); font-size:12.5px; cursor:pointer}
+  .srow{display:flex; align-items:center; gap:8px; border:1px solid var(--line); border-radius:var(--r-sm); padding:5px 8px; margin-bottom:6px}
+  .srow input[type=checkbox]{width:16px; height:16px; accent-color:var(--st-done); flex:0 0 auto}
+  .srow input[type=text]{flex:1; border:0; outline:0; background:transparent; font-size:13px; padding:3px 0}
+  .srow.done input[type=text]{text-decoration:line-through; color:var(--muted)}
+  .srow .x{border:0; background:none; color:var(--muted); padding:2px 5px}
+  .srow .x:hover{color:var(--accent)}
+  .drop{border:1px dashed var(--line-2); border-radius:var(--r-sm); padding:13px; text-align:center; color:var(--muted); font-size:12.5px; cursor:pointer}
   .drop:hover{border-color:var(--ink-2); color:var(--ink-2)}
-  .frow{display:flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:2px; padding:7px 10px; font-size:12.5px; margin-top:6px}
+  .frow{display:flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:var(--r-sm); padding:7px 10px; font-size:12.5px; margin-top:6px}
   .frow .fn{flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
   .frow .fs{font-family:var(--mono); font-size:10.5px; color:var(--muted)}
   .frow a{color:var(--st-doing); font-size:12px}
   .frow .x{border:0; background:none; color:var(--accent); padding:2px 4px}
-  .lrow{display:flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:2px; padding:7px 9px; margin-bottom:7px}
-  .lrow input[type=color]{width:28px; height:28px; border:1px solid var(--line); border-radius:2px; padding:0; background:none; cursor:pointer; flex:0 0 auto}
-  .lrow input[type=text]{flex:1; border:1px solid var(--line); border-radius:2px; padding:6px 8px; font-size:13px; outline:0}
+  .lrow{display:flex; align-items:center; gap:9px; border:1px solid var(--line); border-radius:var(--r-sm); padding:7px 9px; margin-bottom:7px}
+  .lrow input[type=color]{width:28px; height:28px; border:1px solid var(--line); border-radius:4px; padding:0; background:none; cursor:pointer; flex:0 0 auto}
+  .lrow input[type=text]{flex:1; border:1px solid var(--line); border-radius:4px; padding:6px 8px; font-size:13px; outline:0; background:var(--card)}
   .lrow .x{border:0; background:none; color:var(--accent); font-size:12px; padding:4px 7px}
   .opt{border:1px solid var(--line); border-radius:var(--r); padding:14px; background:var(--paper)}
-  .opt h4{margin:0 0 5px; font-size:13px; font-weight:500}
+  .opt h4{margin:0 0 5px; font-size:13px; font-weight:600}
   .opt p{margin:0 0 10px; font-size:12px; color:var(--ink-2); line-height:1.65}
   .opt .btns{display:flex; gap:8px; flex-wrap:wrap}
-  .badge{display:inline-block; font-size:9.5px; font-family:var(--mono); letter-spacing:.1em; padding:2px 6px; border-radius:2px; border:1px solid var(--line-2); color:var(--muted); margin-left:6px; vertical-align:middle}
+  .badge{display:inline-block; font-size:9.5px; font-family:var(--mono); letter-spacing:.1em; padding:2px 6px; border-radius:20px; border:1px solid var(--line-2); color:var(--muted); margin-left:6px; vertical-align:middle}
   .badge.now{border-color:var(--st-done); color:var(--st-done)}
 
-  .toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(14px); opacity:0; background:var(--ink); color:var(--card); font-size:13px; padding:9px 16px; border-radius:2px; z-index:90; transition:.2s; pointer-events:none}
+  /* ── design picker ── */
+  .themes{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px}
+  .th{border:2px solid var(--line); border-radius:var(--r); background:var(--card); padding:0; text-align:left; overflow:hidden; transition:border-color .12s}
+  .th:hover{border-color:var(--line-2)}
+  .th.on{border-color:var(--brand); box-shadow:0 0 0 3px var(--brand-soft)}
+  .th .pv{height:92px; padding:9px; display:flex; flex-direction:column; gap:6px}
+  .th .pv .hb{height:12px; border-radius:3px; display:flex; align-items:center; gap:4px; padding:0 4px}
+  .th .pv .hb i{width:6px; height:6px; border-radius:2px}
+  .th .pv .row{display:flex; gap:6px; flex:1}
+  .th .pv .cd{flex:1; border-radius:4px; padding:6px; display:flex; flex-direction:column; gap:4px}
+  .th .pv .cd s{display:block; height:5px; border-radius:2px; text-decoration:none}
+  .th .meta{padding:9px 11px 11px; border-top:1px solid var(--line)}
+  .th .meta b{display:block; font-size:13px}
+  .th .meta span{font-size:11.5px; color:var(--muted)}
+
+  .toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%) translateY(14px); opacity:0; background:var(--ink); color:var(--card); font-size:13px; padding:9px 16px; border-radius:var(--r-sm); z-index:90; transition:.2s; pointer-events:none; box-shadow:var(--shadow-lg)}
   .toast.on{opacity:1; transform:translateX(-50%)}
 
+  @media (max-width:1180px){
+    aside.today.open{box-shadow:var(--shadow-lg)}
+    .shell{grid-template-columns:minmax(0,1fr)}
+    aside.today{position:fixed; top:0; right:0; bottom:0; margin:0; width:min(380px,92vw); max-height:none; border-radius:0; z-index:65; transform:translateX(105%); transition:transform .22s ease}
+    aside.today.open{transform:none}
+    .td-close{display:inline-flex}
+    .today-fab{display:inline-flex}
+    .week{grid-template-columns:repeat(3,minmax(0,1fr))}
+  }
   @media (max-width:760px){
     .matrix{grid-template-columns:1fr}
     .two{grid-template-columns:1fr}
-    .top-in,.ctrl,main,.alerts{padding-left:14px; padding-right:14px}
-    .mascot{right:12px; bottom:12px}
-    .fatboy{width:58px}
-    .bubble{max-width:190px; padding:10px 12px}
+    .top-in,.shell,.alerts{padding-left:16px; padding-right:16px}
+    .week{grid-template-columns:1fr}
+    .day{min-height:0}
+    .mascot{left:12px; bottom:12px}
+    .fatboy{width:52px}
+    .bubble{max-width:180px; padding:10px 12px}
     .bubble .q{font-size:12px}
+    .qhint{display:none}
+    .td-item .ops{opacity:1}
   }
   @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 </style>
@@ -265,7 +438,12 @@
       <div><h1>工作記事</h1><div class="sub">WORK NOTES</div></div>
     </div>
     <nav class="tabs" id="tabs"></nav>
+    <div class="grow"></div>
     <button class="btn q" id="acct" style="display:none;font-family:var(--mono);font-size:11px" title="Google 帳戶（撳開資料設定）"></button>
+    <button class="btn q" id="designBtn" title="設計 · 揀外觀">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16a5 5 0 0 0 5-5c0-4-4-7.2-9-7.2z"/><circle cx="7.5" cy="11.5" r="1.2"/><circle cx="10.5" cy="7.5" r="1.2"/><circle cx="15.5" cy="7.8" r="1.2"/></svg>
+      <span>設計</span>
+    </button>
     <button class="btn q" id="dataBtn" title="資料備份與同步">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
     </button>
@@ -273,42 +451,68 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
     </button>
     <button class="btn solid" id="addBtn">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 5v14M5 12h14"/></svg> 新增工作
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> 新增工作
     </button>
   </div>
 </header>
 
 <div class="alerts" id="alerts"></div>
 
-<div class="ctrl">
-  <div class="seg" id="viewSeg">
-    <button data-v="matrix" class="on">四象限</button>
-    <button data-v="category">類別</button>
-    <button data-v="overview">總覽</button>
+<div class="shell">
+  <div class="mainc">
+    <div class="ctrl">
+      <div class="seg" id="viewSeg">
+        <button data-v="matrix" class="on">四象限</button>
+        <button data-v="category">類別</button>
+        <button data-v="week">本週</button>
+        <button data-v="overview">總覽</button>
+      </div>
+      <div class="wknav" id="wkNav" style="display:none">
+        <button class="btn q sm" id="wkPrev" title="上星期"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <b id="wkLabel"></b>
+        <button class="btn q sm" id="wkNext" title="下星期"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+        <button class="btn sm" id="wkNow">今個星期</button>
+      </div>
+      <div class="seg" id="ovSeg" style="display:none">
+        <button data-o="list" class="on">列表</button>
+        <button data-o="table">表格</button>
+      </div>
+      <select class="pillsel" id="ovScope" style="display:none">
+        <option value="all">全部分頁</option>
+        <option value="cur">只看目前分頁</option>
+      </select>
+      <div class="find">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input id="q" placeholder="搜尋">
+      </div>
+      <select class="pillsel" id="fSt">
+        <option value="">全部狀態</option>
+        <option value="todo">未開始</option><option value="doing">進行中</option>
+        <option value="pending">待處理</option><option value="blocked">卡住</option><option value="done">已完成</option>
+      </select>
+      <label class="pillsel"><input type="checkbox" id="hideDone"> 隱藏已完成</label>
+      <div class="spacer"></div>
+      <button class="btn sm" id="labelsBtn">編輯類別</button>
+    </div>
+
+    <form class="quick" id="quick" autocomplete="off">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      <input type="text" id="qa" placeholder="快速新增工作，打完按 Enter">
+      <label><input type="checkbox" id="qaToday"> 加入今日</label>
+      <button class="btn solid sm" type="submit">新增</button>
+    </form>
+    <div class="qhint">加到目前分頁。可以喺句子入面加：<code>!</code> 緊急　<code>*</code> 重要　<code>@聽日</code> <code>@星期五</code> <code>@10/15</code> 到期日</div>
+
+    <main id="board"></main>
   </div>
-  <div class="seg" id="ovSeg" style="display:none">
-    <button data-o="list" class="on">列表</button>
-    <button data-o="table">表格</button>
-  </div>
-  <select class="pillsel" id="ovScope" style="display:none">
-    <option value="all">全部分頁</option>
-    <option value="cur">只看目前分頁</option>
-  </select>
-  <div class="find">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-    <input id="q" placeholder="搜尋">
-  </div>
-  <select class="pillsel" id="fSt">
-    <option value="">全部狀態</option>
-    <option value="todo">未開始</option><option value="doing">進行中</option>
-    <option value="pending">待處理</option><option value="blocked">卡住</option><option value="done">已完成</option>
-  </select>
-  <label class="pillsel"><input type="checkbox" id="hideDone"> 隱藏已完成</label>
-  <div class="spacer"></div>
-  <button class="btn sm" id="labelsBtn">編輯類別</button>
+
+  <aside class="today" id="today" aria-label="今日待辦"></aside>
 </div>
 
-<main id="board"></main>
+<button class="today-fab" id="todayFab">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+  今日 <b id="fabN">0</b>
+</button>
 
 <!-- mascot -->
 <div class="mascot" id="mascot">
@@ -345,7 +549,7 @@
     <button class="btn q" id="jobX">✕</button>
   </div>
   <div class="m-body">
-    <div class="f"><label class="lbl">工作標題 Title</label><input class="in" id="iTitle" placeholder="例：三樓男廁漏水維修"></div>
+    <div class="f"><label class="lbl">工作標題 Title</label><input class="in" id="iTitle" placeholder="例：S5 Elasticity 工作紙批改"></div>
     <div class="f"><label class="lbl">類別 Category</label><div class="picks" id="iLabels"></div></div>
     <div class="f"><label class="lbl">優先次序 Priority</label>
       <div class="two">
@@ -354,12 +558,20 @@
       </div>
     </div>
     <div class="f"><label class="lbl">狀態 Status</label><div class="picks" id="iStatus"></div></div>
+    <div class="f"><label class="lbl">步驟 Checklist</label>
+      <div id="iSubs"></div>
+      <input class="in" id="iSubNew" placeholder="加一個步驟，按 Enter">
+      <div class="hint">有步驟嘅話，進度會按已剔步驟自動計。</div>
+    </div>
     <div class="f"><label class="lbl">進度 Progress</label>
       <div class="rng"><input type="range" id="iProg" min="0" max="100" step="5" value="0"><b id="iProgN">0%</b></div>
     </div>
-    <div class="f"><label class="lbl">到期 / 提醒 Due</label><input class="in" type="datetime-local" id="iDue">
-      <div class="hint">到期前 24 小時及逾期會在頂部提示，並可推送瀏覽器通知。</div></div>
-    <div class="f"><label class="lbl">備註 Notes</label><textarea class="ta" id="iNotes" placeholder="承辦商、報價、聯絡人、跟進事項…"></textarea></div>
+    <div class="two">
+      <div class="f"><label class="lbl">到期 / 提醒 Due</label><input class="in" type="datetime-local" id="iDue"></div>
+      <div class="f"><label class="lbl">重複 Repeat</label><select class="sel" id="iRep"></select></div>
+    </div>
+    <div class="hint" style="margin-top:-10px;font-size:11.5px;color:var(--muted)">到期前 24 小時及逾期會喺頂部提示。設咗重複嘅話，完成之後會自動開下一次。</div>
+    <div class="f"><label class="lbl">備註 Notes</label><textarea class="ta" id="iNotes" placeholder="聯絡人、跟進事項、相關連結…"></textarea></div>
     <div class="f"><label class="lbl">附件 Files</label>
       <div class="drop" id="iDrop">按此選擇檔案，或拖曳到此（單檔 4MB 以內）</div>
       <input type="file" id="iFile" multiple hidden><div id="iFileList"></div>
@@ -367,8 +579,22 @@
   </div>
   <div class="m-foot">
     <button class="btn" id="jobDel" style="color:var(--accent);border-color:var(--accent)">刪除</button>
+    <button class="btn" id="jobToday"></button>
     <div class="spacer"></div><button class="btn" id="jobCancel">取消</button><button class="btn solid" id="jobSave">儲存</button>
   </div>
+</div></div>
+
+<!-- design modal -->
+<div class="scrim" id="desScrim"><div class="modal" style="width:min(700px,100%)">
+  <div class="m-head"><div><h2>設計 Design</h2><div class="code">揀一個外觀，即時套用</div></div><button class="btn q" id="desX">✕</button></div>
+  <div class="m-body">
+    <div class="themes" id="themeList"></div>
+    <div class="f"><label class="lbl">密度 Density</label>
+      <div class="seg" id="denSeg"><button data-d="comfy">舒適</button><button data-d="compact">緊湊</button></div>
+    </div>
+    <div class="tog" id="mascotTog" style="max-width:320px"><div><b>顯示吉祥物同金句</b><small>MASCOT</small></div><span class="sw"></span></div>
+  </div>
+  <div class="m-foot"><div class="spacer"></div><button class="btn solid" id="desClose">完成</button></div>
 </div></div>
 
 <!-- labels modal -->
@@ -584,18 +810,21 @@ const Q=[
 const uid=()=>Math.random().toString(36).slice(2,9);
 const ST=[{i:'todo',n:'未開始',c:'--st-todo'},{i:'doing',n:'進行中',c:'--st-doing'},{i:'pending',n:'待處理',c:'--st-pending'},{i:'blocked',n:'卡住',c:'--st-blocked'},{i:'done',n:'已完成',c:'--st-done'}];
 const st=i=>ST.find(s=>s.i===i)||ST[0];
+const REP=[['','不重複'],['weekday','每個上課日（一至五）'],['daily','每日'],['weekly','每星期'],['biweekly','每兩星期'],['monthly','每月']];
+const repName=r=>(REP.find(x=>x[0]===r)||REP[0])[1];
 
 function seed(){
   const ga=[['Major repairs (ing)','#8E3B2E'],['Major repairs (pending)','#B5836A'],['Emergency repairs (ing)','#9B4A5E'],['Emergency repairs (pending)','#C08A98'],['Tender (ing)','#5B5480'],['Tender (planning)','#8F89AE'],['Construction work (ing)','#3F5F73'],['Construction work (upcoming)','#7E9AAB'],['School stuff repairs','#5C7355'],['Contact / to-do list','#4F7A72']].map(x=>({id:uid(),name:x[0],color:x[1]}));
   const ec=[['備課 Lesson prep','#3F5F73'],['Past paper analysis','#5B5480'],['批改 Marking','#8E3B2E'],['教材製作 Materials','#5C7355'],['Student follow-up','#B5836A'],['科務 Admin','#8D8778']].map(x=>({id:uid(),name:x[0],color:x[1]}));
   const a=uid(),b=uid();
-  return{v:2,seq:1,cur:a,sections:[{id:a,name:'總務組 General Affairs',pre:'GA',labels:ga},{id:b,name:'經濟科教學 Economics',pre:'EC',labels:ec}],tasks:[]};
+  return{v:2,seq:1,cur:a,sections:[{id:a,name:'總務組 General Affairs',pre:'GA',labels:ga},{id:b,name:'經濟科教學 Economics',pre:'EC',labels:ec}],tasks:[],today:{date:todayStr(),ids:[]}};
 }
 
-let D=null, view='matrix', ovMode='list', ovScope='all';
-let flt={q:'',st:'',hide:false}, editing=null, drafts=[], notified=new Set();
+let D=null, view='matrix', ovMode='list', ovScope='all', weekOff=0;
+let flt={q:'',st:'',hide:false}, editing=null, drafts=[], subDraft=[], notified=new Set();
 let endpoint='', autoSync=false, lastSync='';
 let idToken=null, acct=null;   // acct = {email,name}
+let ui={theme:'pro',density:'comfy',mascot:true};
 
 /* ── Google Sign-In（只影響雲端同步，唔影響本機使用） ── */
 const gsiReady=()=>!!GOOGLE_CLIENT_ID&&location.protocol!=='file:'&&typeof google!=='undefined'&&google.accounts&&google.accounts.id;
@@ -643,22 +872,183 @@ async function boot(){
   endpoint=(await store.get(EKEY))||'';
   autoSync=(await store.get(AKEY))==='1';
   lastSync=(await store.get(LKEY))||'';
+  try{Object.assign(ui,JSON.parse(localStorage.getItem('wn:ui')||'{}'))}catch(e){}
 }
 
 /* ══════════════ utils ══════════════ */
 const $=s=>document.querySelector(s);
 const esc=s=>(s==null?'':String(s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sec=()=>D.sections.find(s=>s.id===D.cur);
+const secOf=t=>D.sections.find(s=>s.id===t.sectionId);
 const lab=(s,id)=>s.labels.find(l=>l.id===id);
 const size=b=>b<1024?b+' B':b<1048576?(b/1024).toFixed(0)+' KB':(b/1048576).toFixed(1)+' MB';
+const pad=n=>String(n).padStart(2,'0');
+const dayKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayStr=()=>dayKey(new Date());
 function fdue(iso){if(!iso)return'';const d=new Date(iso),n=new Date(),o={month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false};if(d.getFullYear()!==n.getFullYear())o.year='numeric';return d.toLocaleString('zh-HK',o).replace(',','')}
 function dstate(iso,s){if(!iso||s==='done')return'';const df=new Date(iso)-new Date();return df<0?'over':df<864e5?'soon':''}
-function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),1900)}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200)}
 const quadName=t=>t.urgent&&t.important?'緊急·重要':t.important?'重要·不緊急':t.urgent?'緊急·不重要':'不緊急·不重要';
+/* 未完成排先；然後按到期日，最就嚟到期排最頂；冇到期日排最尾 */
+const dueNum=t=>t.due?Date.parse(t.due):9e15;
+const sortT=(a,b)=>((a.status==='done')-(b.status==='done'))||(dueNum(a)-dueNum(b))||((a.created||0)-(b.created||0));
+const newJid=sid=>{const s=D.sections.find(x=>x.id===sid)||sec();const j=s.pre+'-'+String(D.seq).padStart(4,'0');D.seq++;return j};
+
 const CHECK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const I={
+  sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
+  rep:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>',
+  grip:'<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>',
+  up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 15l-6-6-6 6"/></svg>',
+  down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  clip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.4 11 12.3 20.2a5 5 0 0 1-7.1-7.1l9.2-9.2a3 3 0 0 1 4.3 4.3l-9.2 9.2a1 1 0 0 1-1.5-1.5l8.5-8.5"/></svg>',
+  note:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 6h14M5 12h14M5 18h9"/></svg>'
+};
+
+/* ══════════════ today list ══════════════ */
+/* D.today = {date:'YYYY-MM-DD', ids:[按優先次序]}。過咗日，未完成嘅自動帶到今日，已完成嘅清走。 */
+function ensureToday(){
+  const k=todayStr();
+  if(!D.today) D.today={date:k,ids:[]};
+  D.today.ids=D.today.ids.filter(id=>D.tasks.some(t=>t.id===id));
+  if(D.today.date!==k){
+    const keep=D.today.ids.filter(id=>{const t=D.tasks.find(x=>x.id===id);return t&&t.status!=='done'});
+    D.today={date:k,ids:keep};save();
+    if(keep.length) toast('琴日未完成嘅 '+keep.length+' 項已帶到今日');
+  }
+}
+const inToday=id=>!!(D.today&&D.today.ids.includes(id));
+function toggleToday(id){
+  if(inToday(id)){D.today.ids=D.today.ids.filter(x=>x!==id);toast('已從今日移除')}
+  else{D.today.ids.push(id);toast('已加入今日待辦')}
+  save();render();
+}
+function moveToday(id,dir){
+  const a=D.today.ids,i=a.indexOf(id),j=i+dir;if(i<0||j<0||j>=a.length)return;
+  [a[i],a[j]]=[a[j],a[i]];save();renderToday();
+}
+function sugWhy(t){
+  if(!t.due) return t.urgent&&t.important?[2,'即刻做']:null;
+  const d=new Date(t.due),k=dayKey(d),now=new Date(),tm=new Date();tm.setDate(tm.getDate()+1);
+  if(d<now) return[0,'逾期'];
+  if(k===todayStr()) return[1,'今日到期'];
+  if(t.urgent&&t.important) return[2,'即刻做'];
+  if(k===dayKey(tm)) return[3,'聽日到期'];
+  return null;
+}
+function renderToday(){
+  ensureToday();
+  const el=$('#today'),ids=D.today.ids;
+  const items=ids.map(id=>D.tasks.find(t=>t.id===id)).filter(Boolean);
+  const done=items.filter(t=>t.status==='done').length, left=items.length-done;
+  const d=new Date(),WD='日一二三四五六';
+  const sug=D.tasks.filter(t=>t.status!=='done'&&!ids.includes(t.id)).map(t=>({t,w:sugWhy(t)})).filter(x=>x.w)
+    .sort((a,b)=>a.w[0]-b.w[0]||sortT(a.t,b.t)).slice(0,6);
+  const row=(t,i)=>{const s=secOf(t),ds=dstate(t.due,t.status),n=t.subs&&t.subs.length?t.subs.filter(x=>x.done).length+'/'+t.subs.length:'';
+    return `<li class="td-item${t.status==='done'?' done':''}" draggable="true" data-id="${t.id}">
+      <span class="grip" title="拖曳排次序">${I.grip}</span>
+      <span class="no">${i+1}</span>
+      <button class="tick" data-tick="${t.id}" title="標記完成">${CHECK}</button>
+      <div class="tb" data-open="${t.id}"><div class="tt">${esc(t.title||'（未命名）')}</div>
+        <div class="tm"><span>${esc(s?(s.pre||s.name):'')}</span>${t.due?`<span class="${ds==='over'?'over':''}">${esc(fdue(t.due))}</span>`:''}${n?`<span>☑ ${n}</span>`:''}${t.urgent&&t.important?'<span style="color:var(--accent)">即刻做</span>':''}</div></div>
+      <div class="ops"><button data-up="${t.id}" title="上移">${I.up}</button><button data-down="${t.id}" title="下移">${I.down}</button><button data-rm="${t.id}" title="從今日移除">${I.x}</button></div>
+    </li>`};
+  el.innerHTML=`
+    <div class="td-head">
+      <div><div class="lbl">今日待辦 · Today</div><h2>${d.getMonth()+1}月${d.getDate()}日 星期${WD[d.getDay()]}</h2></div>
+      <div class="td-count"><b>${done}/${items.length}</b><span>已完成</span></div>
+      <button class="btn q sm td-close" id="tdClose" title="收起">${I.x}</button>
+    </div>
+    <div class="td-prog"><i style="width:${items.length?Math.round(done/items.length*100):0}%"></i></div>
+    <div class="td-scroll">
+      ${items.length?`<ol class="td-list" id="tdList">${items.map(row).join('')}</ol>`:'<div class="td-empty">今日未揀要做嘅工作。<br>喺下面「建議加入」撳 ＋，或者喺任何工作卡右上角撳 ☀ 加入。</div>'}
+      <form class="td-add" id="tdAdd" autocomplete="off"><input id="tdNew" placeholder="直接加一項到今日，按 Enter"></form>
+      ${sug.length?`<div class="td-sug"><span class="lbl">建議加入 Suggested</span>${sug.map(x=>`<div class="sg" data-open="${x.t.id}"><span class="why w${x.w[0]}">${x.w[1]}</span><span class="st">${esc(x.t.title)}</span><button class="plus" data-add="${x.t.id}" title="加入今日">${I.plus}</button></div>`).join('')}</div>`:''}
+      ${done?'<div class="td-foot"><button class="btn sm" id="tdClear">清走已完成</button></div>':''}
+    </div>`;
+  $('#fabN').textContent=left;
+  el.querySelectorAll('[data-tick]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleDone(b.dataset.tick)});
+  el.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openJob(b.dataset.open));
+  el.querySelectorAll('[data-add]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleToday(b.dataset.add)});
+  el.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>moveToday(b.dataset.up,-1));
+  el.querySelectorAll('[data-down]').forEach(b=>b.onclick=()=>moveToday(b.dataset.down,1));
+  el.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>toggleToday(b.dataset.rm));
+  const c=$('#tdClear');if(c)c.onclick=()=>{D.today.ids=D.today.ids.filter(id=>{const t=D.tasks.find(x=>x.id===id);return t&&t.status!=='done'});save();renderToday()};
+  $('#tdClose').onclick=()=>el.classList.remove('open');
+  $('#tdAdd').onsubmit=e=>{e.preventDefault();quickAdd($('#tdNew').value,true)&&renderToday()};
+  /* 拖曳排序 */
+  let dragId=null;
+  el.querySelectorAll('.td-item').forEach(li=>{
+    li.addEventListener('dragstart',e=>{dragId=li.dataset.id;li.classList.add('drag');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',dragId)}catch(x){}});
+    li.addEventListener('dragend',()=>{li.classList.remove('drag');el.querySelectorAll('.td-item').forEach(x=>x.classList.remove('over-top','over-bot'))});
+    li.addEventListener('dragover',e=>{e.preventDefault();const r=li.getBoundingClientRect(),top=e.clientY<r.top+r.height/2;li.classList.toggle('over-top',top);li.classList.toggle('over-bot',!top)});
+    li.addEventListener('dragleave',()=>li.classList.remove('over-top','over-bot'));
+    li.addEventListener('drop',e=>{e.preventDefault();if(!dragId||dragId===li.dataset.id)return;
+      const r=li.getBoundingClientRect(),top=e.clientY<r.top+r.height/2,a=D.today.ids.filter(x=>x!==dragId);
+      let j=a.indexOf(li.dataset.id);if(!top)j++;a.splice(j,0,dragId);D.today.ids=a;save();renderToday()});
+  });
+}
+
+/* ══════════════ quick add ══════════════ */
+/* 「! 」緊急、「* 」重要、@今日 @聽日 @星期五 @10/15 到期（預設 18:00） */
+function parseQuick(raw){
+  let s=' '+raw+' ', urgent=false, important=false, due=null;
+  const at=(d)=>{d.setHours(18,0,0,0);return d};
+  if(/\s!\s/.test(s)){urgent=true;s=s.replace(/\s!(?=\s)/g,' ')}
+  if(/\s\*\s/.test(s)){important=true;s=s.replace(/\s\*(?=\s)/g,' ')}
+  s=s.replace(/\s@(\S+)(?=\s)/g,(m,w)=>{
+    const now=new Date(),d=new Date();w=w.toLowerCase();
+    if(/^(今日|今天|today)$/.test(w)){due=at(d);return' '}
+    if(/^(聽日|明天|明日|tmr|tomorrow)$/.test(w)){d.setDate(d.getDate()+1);due=at(d);return' '}
+    let m2=w.match(/^(\d{1,2})[\/\-.](\d{1,2})$/);
+    if(m2){const x=at(new Date(now.getFullYear(),+m2[1]-1,+m2[2]));if(x<now&&dayKey(x)!==todayStr())x.setFullYear(x.getFullYear()+1);due=x;return' '}
+    const WM={'日':0,'天':0,'一':1,'二':2,'三':3,'四':4,'五':5,'六':6,sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6};
+    m2=w.match(/^(?:星期|禮拜|週|周)?([日天一二三四五六])$/)||w.match(/^(sun|mon|tue|wed|thu|fri|sat)/);
+    if(m2){const t=WM[m2[1]];let n=(t-d.getDay()+7)%7;if(n===0)n=7;d.setDate(d.getDate()+n);due=at(d);return' '}
+    return m;
+  });
+  return{title:s.replace(/\s+/g,' ').trim(),urgent,important,due:due?due.toISOString():''};
+}
+function quickAdd(raw,toToday){
+  const p=parseQuick(raw||'');
+  if(!p.title){toast('請輸入工作標題');return false}
+  const t={id:uid(),jid:newJid(D.cur),sectionId:D.cur,title:p.title,labelId:null,urgent:p.urgent,important:p.important,status:'todo',progress:0,due:p.due,notes:'',files:[],subs:[],repeat:'',created:Date.now(),updated:Date.now()};
+  D.tasks.push(t);
+  if(toToday) D.today.ids.push(t.id);
+  save();render();
+  toast('已加到「'+sec().name+'」'+(p.due?'，到期 '+fdue(p.due):'')+(toToday?'，同埋今日待辦':''));
+  return true;
+}
+
+/* ══════════════ repeat ══════════════ */
+function nextDue(iso,rep){
+  const d=new Date(iso);
+  if(rep==='daily') d.setDate(d.getDate()+1);
+  else if(rep==='weekday'){do{d.setDate(d.getDate()+1)}while(d.getDay()===0||d.getDay()===6)}
+  else if(rep==='weekly') d.setDate(d.getDate()+7);
+  else if(rep==='biweekly') d.setDate(d.getDate()+14);
+  else if(rep==='monthly'){const day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+1);d.setDate(Math.min(day,new Date(d.getFullYear(),d.getMonth()+1,0).getDate()))}
+  return d.toISOString();
+}
+/* 完成一項重複工作 → 開下一次（每項只會開一次，取消完成再完成唔會重複開） */
+function spawnNext(t){
+  if(!t.repeat||t.spawned) return;
+  let base=t.due;
+  if(!base){const d=new Date();d.setHours(18,0,0,0);base=d.toISOString()}
+  let n=nextDue(base,t.repeat);
+  while(new Date(n)<new Date()) n=nextDue(n,t.repeat);
+  t.spawned=true;
+  D.tasks.push({id:uid(),jid:newJid(t.sectionId),sectionId:t.sectionId,title:t.title,labelId:t.labelId,urgent:t.urgent,important:t.important,
+    status:'todo',progress:0,due:n,notes:t.notes,files:[],subs:(t.subs||[]).map(x=>({id:uid(),text:x.text,done:false})),repeat:t.repeat,created:Date.now(),updated:Date.now()});
+  toast('已開下一次：'+fdue(n));
+}
 
 /* ══════════════ render ══════════════ */
-function render(){tabs();board();alerts()}
+function render(){ensureToday();tabs();board();alerts();renderToday()}
 
 function tabs(){
   const el=$('#tabs');el.innerHTML='';
@@ -674,39 +1064,44 @@ function tabs(){
   const a=document.createElement('button');a.className='tab new';a.textContent='＋';a.title='新增分頁（雙擊分頁名可改名／刪除）';a.onclick=()=>openSec(null);el.appendChild(a);
 }
 
-const pass=t=>!(flt.hide&&t.status==='done')&&(!flt.st||t.status===flt.st)&&(!flt.q||((t.title||'')+(t.notes||'')).toLowerCase().includes(flt.q.toLowerCase()));
+const pass=t=>!(flt.hide&&t.status==='done')&&(!flt.st||t.status===flt.st)&&(!flt.q||((t.title||'')+(t.notes||'')+((t.subs||[]).map(x=>x.text).join(' '))).toLowerCase().includes(flt.q.toLowerCase()));
 
 function card(t,i,s){
   const L=lab(s,t.labelId), S=st(t.status), ds=dstate(t.due,t.status);
+  const ns=t.subs&&t.subs.length?t.subs.filter(x=>x.done).length+'/'+t.subs.length:'';
   return `<article class="job${t.status==='done'?' done':''}" data-id="${t.id}">
     <span class="tape" style="background:${L?L.color:'var(--line-2)'}"></span>
     <span class="idx">${i+1}</span>
     <button class="tick" data-tick="${t.id}" title="標記完成">${CHECK}</button>
+    <button class="sun${inToday(t.id)?' on':''}" data-today="${t.id}" title="${inToday(t.id)?'已喺今日待辦（撳一下移除）':'加入今日待辦'}">${I.sun}</button>
     <div class="code">${esc(t.jid||'')}</div>
     <div class="title">${esc(t.title||'（未命名）')}</div>
     <div class="tags">
-      ${L?`<span class="tag" style="border-color:${L.color}55;color:${L.color};background:${L.color}0F"><span class="d" style="background:${L.color}"></span>${esc(L.name)}</span>`:''}
+      ${L?`<span class="tag" style="border-color:${L.color}55;color:${L.color};background:${L.color}12"><span class="d" style="background:${L.color}"></span>${esc(L.name)}</span>`:''}
       <span class="tag quad">${quadName(t)}</span>
       <span class="tag st" style="border-color:var(${S.c});color:var(${S.c})">${S.n}</span>
     </div>
     <div class="bar"><i style="width:${t.progress||0}%"></i></div>
     <div class="foot">
-      ${t.due?`<span class="m ${ds==='over'?'over':ds==='soon'?'soon':''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>${esc(fdue(t.due))}</span>`:''}
-      ${t.files&&t.files.length?`<span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.4 11 12.3 20.2a5 5 0 0 1-7.1-7.1l9.2-9.2a3 3 0 0 1 4.3 4.3l-9.2 9.2a1 1 0 0 1-1.5-1.5l8.5-8.5"/></svg>${t.files.length}</span>`:''}
-      ${t.notes?`<span class="m"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 6h14M5 12h14M5 18h9"/></svg></span>`:''}
+      ${t.due?`<span class="m ${ds==='over'?'over':ds==='soon'?'soon':''}">${I.clock}${esc(fdue(t.due))}</span>`:''}
+      ${t.repeat?`<span class="m" title="${esc(repName(t.repeat))}">${I.rep}</span>`:''}
+      ${ns?`<span class="m" title="步驟">${I.list}${ns}</span>`:''}
+      ${t.files&&t.files.length?`<span class="m">${I.clip}${t.files.length}</span>`:''}
+      ${t.notes?`<span class="m">${I.note}</span>`:''}
       <span class="pct">${t.progress||0}%</span>
     </div>
   </article>`;
 }
 const panel=(sw,title,sub,items,s)=>`<section class="panel">
-  <div class="p-head"><span class="swatch" style="background:${sw}"></span><div><h2>${esc(title)}</h2>${sub?`<div class="sub">${sub}</div>`:''}</div><span class="n">${items.length}</span></div>
+  <div class="p-head" style="--sw:${sw}"><span class="swatch" style="background:${sw}"></span><div><h2>${esc(title)}</h2>${sub?`<div class="sub">${sub}</div>`:''}</div><span class="n">${items.length}</span></div>
   <div class="p-body">${items.length?items.map((t,i)=>card(t,i,s)).join(''):'<div class="none">暫無工作</div>'}</div></section>`;
 
 function board(){
   const el=$('#board');
   if(view==='overview'){el.innerHTML=overview()}
+  else if(view==='week'){el.innerHTML=week()}
   else{
-    const s=sec(), list=D.tasks.filter(t=>t.sectionId===D.cur).filter(pass);
+    const s=sec(), list=D.tasks.filter(t=>t.sectionId===D.cur).filter(pass).sort(sortT);
     if(view==='matrix'){
       const qs=[['var(--accent)','即刻做 Do first','URGENT + IMPORTANT',t=>t.urgent&&t.important],
                 ['var(--st-doing)','排程 Schedule','IMPORTANT, NOT URGENT',t=>!t.urgent&&t.important],
@@ -721,17 +1116,41 @@ function board(){
     }
   }
   el.querySelectorAll('[data-tick]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleDone(b.dataset.tick)});
-  el.querySelectorAll('.job').forEach(c=>c.onclick=()=>openJob(c.dataset.id));
-  el.querySelectorAll('tbody tr[data-id]').forEach(r=>r.onclick=()=>{const t=D.tasks.find(x=>x.id===r.dataset.id);D.cur=t.sectionId;openJob(t.id)});
+  el.querySelectorAll('[data-today]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleToday(b.dataset.today)});
+  el.querySelectorAll('.job,.wk').forEach(c=>c.onclick=()=>openJob(c.dataset.id));
+  el.querySelectorAll('tbody tr[data-id]').forEach(r=>r.onclick=()=>openJob(r.dataset.id));
+}
+
+/* ── 本週 ── */
+function weekStart(off){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7)+off*7);return d}
+function week(){
+  const s0=weekStart(weekOff),tk=todayStr(),WD=['一','二','三','四','五','六','日'];
+  const days=[...Array(7)].map((_,i)=>{const d=new Date(s0);d.setDate(d.getDate()+i);return d});
+  const e=days[6];$('#wkLabel').textContent=`${s0.getMonth()+1}/${s0.getDate()} – ${e.getMonth()+1}/${e.getDate()}`;
+  const src=(ovScope==='cur'?D.tasks.filter(t=>t.sectionId===D.cur):D.tasks).filter(pass);
+  const dated=src.filter(t=>t.due);
+  const nodue=src.filter(t=>!t.due&&t.status!=='done').length;
+  const html=days.map((d,i)=>{
+    const k=dayKey(d),items=dated.filter(t=>dayKey(new Date(t.due))===k).sort(sortT);
+    return `<section class="day${k===tk?' is-today':''}${i>4?' wkend':''}"><div class="dh"><b>星期${WD[i]}</b><span>${d.getMonth()+1}/${d.getDate()}</span>${items.length?`<em>${items.length}</em>`:''}</div>
+      <div class="dl">${items.map(wkItem).join('')||'<div class="dnone">—</div>'}</div></section>`}).join('');
+  return `<div class="week">${html}</div>${nodue?`<div class="wk-foot">另有 ${nodue} 項未設到期日，喺「四象限」或「總覽」睇。</div>`:''}`;
+}
+function wkItem(t){
+  const s=secOf(t),L=s&&lab(s,t.labelId),d=new Date(t.due);
+  return `<div class="wk${t.status==='done'?' done':''}" data-id="${t.id}" style="--c:${L?L.color:'var(--line-2)'}">
+    <button class="tk" data-tick="${t.id}" title="標記完成">${CHECK}</button>
+    <div class="wb"><div class="wt">${esc(t.title||'（未命名）')}</div><div class="wm"><span>${pad(d.getHours())}:${pad(d.getMinutes())} · ${esc(s?s.pre:'')}</span>
+    <button class="sun${inToday(t.id)?' on':''}" data-today="${t.id}" title="加入今日待辦">${I.sun}</button></div></div></div>`;
 }
 
 function ovTasks(){
   const src=ovScope==='cur'?D.tasks.filter(t=>t.sectionId===D.cur):D.tasks;
-  return src.filter(pass);
+  return src.filter(pass).sort(sortT);
 }
 function overview(){
   const all=ovTasks();
-  if(!all.length) return '<div class="none">未有工作紀錄。按右上「新增工作」開始。</div>';
+  if(!all.length) return '<div class="none">未有工作紀錄。用上面「快速新增」或者右上「新增工作」開始。</div>';
   const groups=D.sections.map(s=>({s,items:all.filter(t=>t.sectionId===s.id)})).filter(g=>g.items.length);
   if(ovMode==='list'){
     return groups.map(g=>`<div class="ov-sec"><div class="hd"><h2>${esc(g.s.name)}</h2><span class="n">${g.items.length} 項</span></div>
@@ -743,13 +1162,13 @@ function overview(){
     return `<tr data-id="${t.id}" class="${t.status==='done'?'done':''}">
       <td class="num">${n}</td>
       <td class="tickcell"><button data-tick="${t.id}" title="標記完成">${CHECK}</button></td>
-      <td class="t">${esc(t.title||'（未命名）')}<div style="font-family:var(--mono);font-size:9.5px;color:var(--muted)">${esc(t.jid||'')}</div></td>
+      <td class="t">${esc(t.title||'（未命名）')}<div style="font-family:var(--mono);font-size:9.5px;color:var(--muted);font-weight:400">${esc(t.jid||'')}</div></td>
       <td>${esc(g.s.name)}</td>
-      <td>${L?`<span class="tag" style="border-color:${L.color}55;color:${L.color};background:${L.color}0F"><span class="d" style="background:${L.color}"></span>${esc(L.name)}</span>`:'<span style="color:var(--muted)">—</span>'}</td>
+      <td>${L?`<span class="tag" style="border-color:${L.color}55;color:${L.color};background:${L.color}12"><span class="d" style="background:${L.color}"></span>${esc(L.name)}</span>`:'<span style="color:var(--muted)">—</span>'}</td>
       <td>${quadName(t)}</td>
       <td><span class="tag st" style="border-color:var(${S.c});color:var(${S.c})">${S.n}</span></td>
       <td class="mono"><span class="minibar"><i style="width:${t.progress||0}%"></i></span>${t.progress||0}%</td>
-      <td class="mono ${ds==='over'?'':''}" style="${ds==='over'?'color:var(--accent)':ds==='soon'?'color:var(--st-pending)':''}">${t.due?esc(fdue(t.due)):'—'}</td>
+      <td class="mono" style="${ds==='over'?'color:var(--accent)':ds==='soon'?'color:var(--st-pending)':''}">${t.due?esc(fdue(t.due)):'—'}${t.repeat?' ↻':''}</td>
       <td class="mono">${t.files&&t.files.length?t.files.length:'—'}</td>
     </tr>`;
   }).join('')).join('');
@@ -762,16 +1181,17 @@ function alerts(){
   const el=$('#alerts');el.innerHTML='';
   const now=new Date(),over=[],soon=[];
   D.tasks.forEach(t=>{if(!t.due||t.status==='done')return;const d=new Date(t.due)-now;d<0?over.push(t):d<864e5&&soon.push(t)});
-  const pill=t=>`<span class="pill" data-id="${t.id}" data-s="${t.sectionId}">${esc(t.title||'（未命名）')} <em>${esc(fdue(t.due))}</em></span>`;
+  over.sort(sortT);soon.sort(sortT);
+  const pill=t=>`<span class="pill" data-id="${t.id}">${esc(t.title||'（未命名）')} <em>${esc(fdue(t.due))}</em></span>`;
   if(over.length) el.innerHTML+=`<div class="alert"><h3>已逾期 ${over.length} 項</h3><div class="row">${over.map(pill).join('')}</div></div>`;
   if(soon.length) el.innerHTML+=`<div class="alert soon"><h3>24 小時內到期 ${soon.length} 項</h3><div class="row">${soon.map(pill).join('')}</div></div>`;
-  el.querySelectorAll('.pill').forEach(p=>p.onclick=()=>{D.cur=p.dataset.s;save();render();openJob(p.dataset.id)});
+  el.querySelectorAll('.pill').forEach(p=>p.onclick=()=>openJob(p.dataset.id));
 }
 
 function toggleDone(id){
   const t=D.tasks.find(x=>x.id===id);if(!t)return;
   if(t.status==='done'){t.status='doing';t.progress=Math.min(t.progress||0,95)}
-  else{t.status='done';t.progress=100;newQuote()}
+  else{t.status='done';t.progress=100;spawnNext(t);newQuote()}
   t.updated=Date.now();save();render();
 }
 
@@ -779,59 +1199,83 @@ function toggleDone(id){
 let ms={labelId:null,urgent:false,important:false,status:'todo'};
 function pickLabels(){
   const s=sec(),b=$('#iLabels');
-  b.innerHTML=s.labels.map(l=>`<button type="button" class="pk${ms.labelId===l.id?' on':''}" data-id="${l.id}"><span class="d" style="background:${l.color}"></span>${esc(l.name)}</button>`).join('')||'<span style="font-size:12px;color:var(--muted)">未有類別</span>';
+  b.innerHTML=s.labels.map(l=>`<button type="button" class="pk${ms.labelId===l.id?' on':''}" data-id="${l.id}"><span class="d" style="background:${l.color}"></span>${esc(l.name)}</button>`).join('')||'<span style="font-size:12px;color:var(--muted)">未有類別，可按「編輯類別」新增</span>';
   b.querySelectorAll('.pk').forEach(x=>x.onclick=()=>{ms.labelId=ms.labelId===x.dataset.id?null:x.dataset.id;pickLabels()});
 }
 function pickStatus(){
   const b=$('#iStatus');
   b.innerHTML=ST.map(s=>`<button type="button" class="pk sto${ms.status===s.i?' on':''}" data-i="${s.i}">${s.n}</button>`).join('');
-  b.querySelectorAll('.pk').forEach(x=>x.onclick=()=>{ms.status=x.dataset.i;if(x.dataset.i==='done'){$('#iProg').value=100;$('#iProgN').textContent='100%'}pickStatus()});
+  b.querySelectorAll('.pk').forEach(x=>x.onclick=()=>{ms.status=x.dataset.i;if(x.dataset.i==='done'&&!subDraft.length){$('#iProg').value=100;$('#iProgN').textContent='100%'}pickStatus()});
+}
+function subList(){
+  const b=$('#iSubs');
+  b.innerHTML=subDraft.map((x,i)=>`<div class="srow${x.done?' done':''}"><input type="checkbox" data-i="${i}"${x.done?' checked':''}><input type="text" data-i="${i}" value="${esc(x.text)}"><button type="button" class="x" data-i="${i}" title="刪除步驟">✕</button></div>`).join('');
+  b.querySelectorAll('input[type=checkbox]').forEach(c=>c.onchange=()=>{subDraft[+c.dataset.i].done=c.checked;subList()});
+  b.querySelectorAll('input[type=text]').forEach(c=>c.oninput=()=>subDraft[+c.dataset.i].text=c.value);
+  b.querySelectorAll('.x').forEach(c=>c.onclick=()=>{subDraft.splice(+c.dataset.i,1);subList()});
+  const r=$('#iProg');
+  if(subDraft.length){const p=Math.round(subDraft.filter(x=>x.done).length/subDraft.length*100);r.value=p;r.disabled=true;$('#iProgN').textContent=p+'%'}
+  else r.disabled=false;
 }
 function fileList(){
   const b=$('#iFileList');
   b.innerHTML=drafts.map((f,i)=>`<div class="frow"><span class="fn">${esc(f.name)}</span><span class="fs">${size(f.size)}</span>${f.dataUrl?`<a href="${f.dataUrl}" download="${esc(f.name)}">下載</a>`:''}<button class="x" data-i="${i}">✕</button></div>`).join('');
   b.querySelectorAll('.x').forEach(x=>x.onclick=()=>{drafts.splice(+x.dataset.i,1);fileList()});
 }
-const toLocal=iso=>{const d=new Date(iso),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`};
+const toLocal=iso=>{const d=new Date(iso);return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`};
+function jobTodayBtn(){const b=$('#jobToday');if(!editing){b.style.display='none';return}b.style.display='';b.innerHTML=I.sun+(inToday(editing)?' 移出今日':' 加入今日')}
 
 function openJob(id){
-  editing=id||null;const s=sec();const t=id?D.tasks.find(x=>x.id===id):null;
+  const t=id?D.tasks.find(x=>x.id===id):null;
+  if(id&&!t)return;
+  /* 由總覽／本週／今日打開其他分頁嘅工作：先切去嗰個分頁，類別先會啱 */
+  if(t&&t.sectionId!==D.cur){D.cur=t.sectionId;save();tabs();if(view!=='overview'&&view!=='week')board()}
+  editing=id||null;const s=sec();
+  $('#iRep').innerHTML=REP.map(r=>`<option value="${r[0]}">${r[1]}</option>`).join('');
   if(t){
-    $('#jobTitle').textContent='編輯工作';$('#jobCode').textContent=t.jid||'';
+    $('#jobTitle').textContent='編輯工作';$('#jobCode').textContent=(t.jid||'')+' · '+s.name;
     $('#iTitle').value=t.title||'';$('#iNotes').value=t.notes||'';$('#iDue').value=t.due?toLocal(t.due):'';
-    $('#iProg').value=t.progress||0;$('#iProgN').textContent=(t.progress||0)+'%';
+    $('#iProg').value=t.progress||0;$('#iProgN').textContent=(t.progress||0)+'%';$('#iRep').value=t.repeat||'';
     ms={labelId:t.labelId||null,urgent:!!t.urgent,important:!!t.important,status:t.status||'todo'};
-    drafts=(t.files||[]).map(f=>({...f}));$('#jobDel').style.display='';
+    drafts=(t.files||[]).map(f=>({...f}));subDraft=(t.subs||[]).map(x=>({...x}));$('#jobDel').style.display='';
   }else{
-    $('#jobTitle').textContent='新增工作';$('#jobCode').textContent=s.pre+'-'+String(D.seq).padStart(4,'0');
-    $('#iTitle').value='';$('#iNotes').value='';$('#iDue').value='';$('#iProg').value=0;$('#iProgN').textContent='0%';
-    ms={labelId:null,urgent:false,important:false,status:'todo'};drafts=[];$('#jobDel').style.display='none';
+    $('#jobTitle').textContent='新增工作';$('#jobCode').textContent=s.pre+'-'+String(D.seq).padStart(4,'0')+' · '+s.name;
+    $('#iTitle').value='';$('#iNotes').value='';$('#iDue').value='';$('#iProg').value=0;$('#iProgN').textContent='0%';$('#iRep').value='';
+    ms={labelId:null,urgent:false,important:false,status:'todo'};drafts=[];subDraft=[];$('#jobDel').style.display='none';
   }
+  $('#iSubNew').value='';
   $('#iUrg').classList.toggle('on',ms.urgent);$('#iImp').classList.toggle('on',ms.important);
-  pickLabels();pickStatus();fileList();$('#jobScrim').classList.add('open');setTimeout(()=>$('#iTitle').focus(),40);
+  pickLabels();pickStatus();fileList();subList();jobTodayBtn();$('#jobScrim').classList.add('open');setTimeout(()=>$('#iTitle').focus(),40);
 }
-const closeJob=()=>{$('#jobScrim').classList.remove('open');editing=null;drafts=[]};
+const closeJob=()=>{$('#jobScrim').classList.remove('open');editing=null;drafts=[];subDraft=[]};
 
 async function saveJob(){
   const title=$('#iTitle').value.trim();
   if(!title){toast('請輸入工作標題');$('#iTitle').focus();return}
+  const pending=$('#iSubNew').value.trim();if(pending){subDraft.push({id:uid(),text:pending,done:false})}
+  const subs=subDraft.filter(x=>x.text.trim()).map(x=>({id:x.id||uid(),text:x.text.trim(),done:!!x.done}));
   const due=$('#iDue').value?new Date($('#iDue').value).toISOString():'';
-  const prog=+$('#iProg').value, files=[];
-  for(const f of drafts){files.push({id:f.id,name:f.name,size:f.size,type:f.type,dataUrl:f.dataUrl})}
+  const prog=subs.length?Math.round(subs.filter(x=>x.done).length/subs.length*100):(ms.status==='done'?100:+$('#iProg').value);
+  const repeat=$('#iRep').value, files=drafts.map(f=>({id:f.id,name:f.name,size:f.size,type:f.type,dataUrl:f.dataUrl}));
+  const fields={title,labelId:ms.labelId,urgent:ms.urgent,important:ms.important,status:ms.status,progress:prog,due,repeat,subs,notes:$('#iNotes').value.trim(),files,updated:Date.now()};
+  let t;
   if(editing){
-    Object.assign(D.tasks.find(x=>x.id===editing),{title,labelId:ms.labelId,urgent:ms.urgent,important:ms.important,status:ms.status,progress:prog,due,notes:$('#iNotes').value.trim(),files,updated:Date.now()});
+    t=D.tasks.find(x=>x.id===editing);const was=t.status;
+    if(repeat!==t.repeat||due!==t.due) t.spawned=false;
+    Object.assign(t,fields);
     toast('已更新');
+    if(was!=='done'&&t.status==='done') spawnNext(t);
   }else{
-    const jid=sec().pre+'-'+String(D.seq).padStart(4,'0');D.seq++;
-    D.tasks.push({id:uid(),jid,sectionId:D.cur,title,labelId:ms.labelId,urgent:ms.urgent,important:ms.important,status:ms.status,progress:prog,due,notes:$('#iNotes').value.trim(),files,created:Date.now(),updated:Date.now()});
-    toast('已新增');
+    t={id:uid(),jid:newJid(D.cur),sectionId:D.cur,...fields,created:Date.now()};
+    D.tasks.push(t);toast('已新增');
+    if(t.status==='done') spawnNext(t);
   }
   save();closeJob();render();
 }
 function delJob(){
   if(!editing)return;const t=D.tasks.find(x=>x.id===editing);
   if(!confirm('刪除「'+(t.title||'此工作')+'」？此動作無法復原。'))return;
-  D.tasks=D.tasks.filter(x=>x.id!==editing);save();closeJob();render();toast('已刪除');
+  D.tasks=D.tasks.filter(x=>x.id!==editing);D.today.ids=D.today.ids.filter(x=>x!==editing);save();closeJob();render();toast('已刪除');
 }
 function addFiles(fl){
   [...fl].forEach(f=>{
@@ -847,7 +1291,7 @@ let ld=[];
 function openLabels(){ld=sec().labels.map(l=>({...l}));$('#labSec').textContent=sec().name;drawLabels();$('#labScrim').classList.add('open')}
 function drawLabels(){
   const b=$('#labList');
-  b.innerHTML=ld.map((l,i)=>`<div class="lrow"><input type="color" value="${l.color}" data-i="${i}" data-k="color"><input type="text" value="${esc(l.name)}" data-i="${i}" data-k="name" placeholder="類別名稱"><button class="x" data-i="${i}">刪除</button></div>`).join('')||'<div class="none">未有類別</div>';
+  b.innerHTML=ld.map((l,i)=>`<div class="lrow"><input type="color" value="${l.color}" data-i="${i}" data-k="color"><input type="text" value="${esc(l.name)}" data-i="${i}" data-k="name" placeholder="類別名稱"><button class="x" data-i="${i}">刪除</button></div>`).join('');
   b.querySelectorAll('input').forEach(x=>x.oninput=()=>ld[+x.dataset.i][x.dataset.k]=x.value);
   b.querySelectorAll('.x').forEach(x=>x.onclick=()=>{ld.splice(+x.dataset.i,1);drawLabels()});
 }
@@ -879,12 +1323,44 @@ function delSec(){
   save();$('#secScrim').classList.remove('open');render();toast('已刪除分頁');
 }
 
+/* ══════════════ design ══════════════ */
+const THEMES=[
+  {id:'pro',     name:'專業 Professional',desc:'白底藍灰，清晰俐落',     c:{bg:'#F5F6F8',card:'#FFFFFF',brand:'#1F4E8C',accent:'#C4320A',ink:'#101828',line:'#E4E7EC'}},
+  {id:'academic',name:'學院 Academic',    desc:'米白配酒紅，標題用宋體',  c:{bg:'#F7F4EE',card:'#FFFFFF',brand:'#8B1E2D',accent:'#8B1E2D',ink:'#1D1B18',line:'#E6DFD3'}},
+  {id:'sage',    name:'森林 Sage',        desc:'柔和綠灰，長時間睇唔攰',  c:{bg:'#F2F4EF',card:'#FFFFFD',brand:'#2F5D46',accent:'#A63D2F',ink:'#1C2820',line:'#DDE2D4'}},
+  {id:'muji',    name:'生成り Muji',      desc:'原本嘅米色紙感',          c:{bg:'#EDE9E0',card:'#FCFAF6',brand:'#33302B',accent:'#7B2E2E',ink:'#33302B',line:'#DCD5C8'}},
+  {id:'night',   name:'深夜 Midnight',    desc:'深色模式，夜晚改簿用',    c:{bg:'#0E131D',card:'#151C29',brand:'#6EA8FF',accent:'#F2795D',ink:'#E7EBF3',line:'#243049'}}
+];
+function applyUI(){
+  const h=document.documentElement;h.dataset.theme=ui.theme;h.dataset.density=ui.density;
+  document.body.classList.toggle('no-mascot',!ui.mascot);
+  const th=THEMES.find(x=>x.id===ui.theme)||THEMES[0];
+  document.querySelector('meta[name=theme-color]').content=th.c.card;
+  try{localStorage.setItem('wn:ui',JSON.stringify(ui))}catch(e){}
+}
+function drawDesign(){
+  $('#themeList').innerHTML=THEMES.map(t=>{const c=t.c;return `<button type="button" class="th${ui.theme===t.id?' on':''}" data-th="${t.id}">
+    <div class="pv" style="background:${c.bg}">
+      <div class="hb" style="background:${c.card};border:1px solid ${c.line}"><i style="background:${c.brand}"></i><i style="background:${c.line};width:22px"></i></div>
+      <div class="row">
+        <div class="cd" style="background:${c.card};border:1px solid ${c.line};border-top:3px solid ${c.accent}"><s style="background:${c.ink};width:70%"></s><s style="background:${c.line}"></s><s style="background:${c.brand};width:45%"></s></div>
+        <div class="cd" style="background:${c.card};border:1px solid ${c.line};border-top:3px solid ${c.brand}"><s style="background:${c.ink};width:55%"></s><s style="background:${c.line}"></s><s style="background:${c.line};width:80%"></s></div>
+      </div>
+    </div>
+    <div class="meta"><b>${t.name}</b><span>${t.desc}</span></div></button>`}).join('');
+  $('#themeList').querySelectorAll('.th').forEach(b=>b.onclick=()=>{ui.theme=b.dataset.th;applyUI();drawDesign()});
+  $('#denSeg').querySelectorAll('button').forEach(b=>{b.classList.toggle('on',b.dataset.d===ui.density);b.onclick=()=>{ui.density=b.dataset.d;applyUI();drawDesign()}});
+  $('#mascotTog').classList.toggle('on',ui.mascot);
+}
+
 /* ══════════════ mascot ══════════════ */
 let lastQ=-1;
 function newQuote(){
   let i;do{i=Math.floor(Math.random()*Q.length)}while(i===lastQ&&Q.length>1);lastQ=i;
   $('#qText').textContent=Q[i][0];$('#qAuthor').textContent='— '+Q[i][1];
   $('#mascot').classList.remove('hidden');
+  /* 手機畫面細，金句過幾秒自動收起 */
+  clearTimeout(newQuote._t);if(innerWidth<760)newQuote._t=setTimeout(()=>$('#mascot').classList.add('hidden'),8000);
 }
 
 /* ══════════════ data: export / import / cloud ══════════════ */
@@ -980,13 +1456,24 @@ async function bell(){
 }
 
 /* ══════════════ wiring ══════════════ */
+function setView(v){
+  view=v;
+  $('#viewSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.v===v));
+  $('#ovSeg').style.display=v==='overview'?'':'none';
+  $('#ovScope').style.display=(v==='overview'||v==='week')?'':'none';
+  $('#wkNav').style.display=v==='week'?'':'none';
+  try{localStorage.setItem('wn:view',v)}catch(e){}
+  board();
+}
 function bind(){
   $('#addBtn').onclick=()=>openJob(null);
   $('#jobX').onclick=$('#jobCancel').onclick=closeJob;
   $('#jobSave').onclick=saveJob;$('#jobDel').onclick=delJob;
+  $('#jobToday').onclick=()=>{if(!editing)return;toggleToday(editing);jobTodayBtn()};
   $('#iUrg').onclick=()=>{ms.urgent=!ms.urgent;$('#iUrg').classList.toggle('on',ms.urgent)};
   $('#iImp').onclick=()=>{ms.important=!ms.important;$('#iImp').classList.toggle('on',ms.important)};
   $('#iProg').oninput=e=>$('#iProgN').textContent=e.target.value+'%';
+  $('#iSubNew').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();const v=e.target.value.trim();if(!v)return;subDraft.push({id:uid(),text:v,done:false});e.target.value='';subList()}};
   $('#iDrop').onclick=()=>$('#iFile').click();
   $('#iFile').onchange=e=>{addFiles(e.target.files);e.target.value=''};
   const dz=$('#iDrop');
@@ -994,20 +1481,18 @@ function bind(){
   ['dragleave','drop'].forEach(v=>dz.addEventListener(v,e=>{e.preventDefault();dz.style.borderColor=''}));
   dz.addEventListener('drop',e=>{if(e.dataTransfer.files)addFiles(e.dataTransfer.files)});
 
-  $('#viewSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{
-    view=b.dataset.v;
-    $('#viewSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
-    const ov=view==='overview';
-    $('#ovSeg').style.display=ov?'':'none';$('#ovScope').style.display=ov?'':'none';
-    board();
-  });
+  $('#viewSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>setView(b.dataset.v));
   $('#ovSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{
     ovMode=b.dataset.o;$('#ovSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));board();
   });
   $('#ovScope').onchange=e=>{ovScope=e.target.value;board()};
+  $('#wkPrev').onclick=()=>{weekOff--;board()};$('#wkNext').onclick=()=>{weekOff++;board()};$('#wkNow').onclick=()=>{weekOff=0;board()};
   $('#q').oninput=e=>{flt.q=e.target.value.trim();board()};
   $('#fSt').onchange=e=>{flt.st=e.target.value;board()};
   $('#hideDone').onchange=e=>{flt.hide=e.target.checked;board()};
+  $('#quick').onsubmit=e=>{e.preventDefault();if(quickAdd($('#qa').value,$('#qaToday').checked))$('#qa').value=''};
+
+  $('#todayFab').onclick=()=>$('#today').classList.toggle('open');
 
   $('#labelsBtn').onclick=openLabels;
   $('#labX').onclick=$('#labCancel').onclick=()=>$('#labScrim').classList.remove('open');
@@ -1016,6 +1501,10 @@ function bind(){
 
   $('#secX').onclick=$('#secCancel').onclick=()=>$('#secScrim').classList.remove('open');
   $('#secSave').onclick=saveSec;$('#secDel').onclick=delSec;
+
+  $('#designBtn').onclick=()=>{drawDesign();$('#desScrim').classList.add('open')};
+  $('#desX').onclick=$('#desClose').onclick=()=>$('#desScrim').classList.remove('open');
+  $('#mascotTog').onclick=()=>{ui.mascot=!ui.mascot;applyUI();drawDesign();if(ui.mascot)newQuote()};
 
   $('#bellBtn').onclick=bell;
 
@@ -1038,12 +1527,22 @@ function bind(){
   $('#bubbleX').onclick=()=>$('#mascot').classList.add('hidden');
 
   document.querySelectorAll('.scrim').forEach(s=>s.addEventListener('mousedown',e=>{if(e.target===s)s.classList.remove('open')}));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.scrim.open').forEach(s=>s.classList.remove('open'))});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){document.querySelectorAll('.scrim.open').forEach(s=>s.classList.remove('open'));$('#today').classList.remove('open')}
+    /* 撳 N 開新增；撳 / 去快速新增 */
+    const typing=/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName)||document.querySelector('.scrim.open');
+    if(!typing&&e.key==='/'){e.preventDefault();$('#qa').focus()}
+    if(!typing&&(e.key==='n'||e.key==='N')&&!e.metaKey&&!e.ctrlKey){e.preventDefault();openJob(null)}
+  });
   if('Notification'in window&&Notification.permission==='granted')$('#bellBtn').style.color='var(--st-done)';
 }
 
 (async function(){
-  await boot();bind();render();newQuote();tick();setInterval(tick,60000);
+  await boot();applyUI();bind();
+  let v='matrix';try{v=localStorage.getItem('wn:view')||'matrix'}catch(e){}
+  render();setView(['matrix','category','week','overview'].includes(v)?v:'matrix');
+  newQuote();tick();
+  setInterval(()=>{tick();if(D.today&&D.today.date!==todayStr())render()},60000);
   acctChip();
   // GIS 可能未載入完，稍後再試一次自動登入
   if(GOOGLE_CLIENT_ID) setTimeout(()=>{ if(gsiReady()&&!acct){
