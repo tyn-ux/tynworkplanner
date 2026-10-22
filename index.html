@@ -386,6 +386,92 @@ try{var u=JSON.parse(localStorage.getItem('wn:ui')||'{}');document.documentEleme
   .badge{display:inline-block; font-size:9.5px; font-family:var(--mono); letter-spacing:.1em; padding:2px 6px; border-radius:20px; border:1px solid var(--line-2); color:var(--muted); margin-left:6px; vertical-align:middle}
   .badge.now{border-color:var(--st-done); color:var(--st-done)}
 
+  /* ── calendar ── */
+  .calbar{display:flex; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap}
+  .calbar h3{margin:0; font-family:var(--head); font-size:18px; min-width:120px; text-align:center}
+  .calhint{font-size:11.5px; color:var(--muted); margin-left:auto}
+  .cal{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; box-shadow:var(--shadow)}
+  .cal .wd{background:var(--paper); font-size:11px; font-weight:600; color:var(--muted); padding:7px 8px; text-align:center}
+  .cell{background:var(--card); min-height:118px; padding:5px 6px 7px; display:flex; flex-direction:column; gap:3px; cursor:pointer; min-width:0}
+  .cell:hover{background:color-mix(in srgb,var(--brand-soft) 45%,var(--card))}
+  .cell.out{background:color-mix(in srgb,var(--paper) 65%,var(--card))}
+  .cell.out .dn{opacity:.45}
+  .cell.wkend .dn{color:var(--muted)}
+  .cell .dn{font-family:var(--mono); font-size:12px; font-weight:500; color:var(--ink-2); display:flex; align-items:center; gap:4px; margin-bottom:1px}
+  .cell .dn .plus{margin-left:auto; opacity:0; color:var(--brand); font-size:15px; line-height:1}
+  .cell:hover .dn .plus{opacity:1}
+  .cell.is-today .dn b{background:var(--brand); color:var(--brand-ink); border-radius:20px; padding:0 7px}
+  .drop{outline:2px dashed var(--brand)!important; outline-offset:-3px; background:var(--brand-soft)!important}
+  .chip{display:flex; align-items:center; gap:4px; font-size:11.5px; line-height:1.35; padding:2px 6px; border-radius:4px; background:color-mix(in srgb,var(--c) 15%,var(--card)); border-left:3px solid var(--c); white-space:nowrap; overflow:hidden; cursor:grab; color:var(--ink)}
+  .chip span{overflow:hidden; text-overflow:ellipsis}
+  .chip i{font-style:normal}
+  .chip:hover{box-shadow:var(--shadow-2)}
+  .chip.done{opacity:.45} .chip.done span{text-decoration:line-through}
+  .chip.over{box-shadow:inset 0 0 0 1px var(--accent)}
+  .chip.stale{box-shadow:inset 0 0 0 1px #E2B53B}
+  .chip.dragging{opacity:.35}
+  .more{font-size:11px; color:var(--brand); padding:1px 4px; font-weight:600}
+  .cadd{width:100%; border:1px solid var(--brand); border-radius:4px; font-size:12px; padding:3px 6px; outline:0; background:var(--card); color:var(--ink)}
+  .tl{display:flex; flex-direction:column; gap:8px}
+  .tl-day{background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); padding:10px 12px}
+  .tl-day.is-today{border-color:var(--brand); box-shadow:0 0 0 1px var(--brand), var(--shadow)}
+  .tl-day.overdue{border-left:4px solid var(--accent)}
+  .tl-day.empty{padding:6px 12px; box-shadow:none; background:transparent; border-style:dashed}
+  .tl-h{display:flex; align-items:center; gap:8px}
+  .tl-h b{font-family:var(--head); font-size:14px}
+  .tl-h span{font-size:11.5px; color:var(--muted); font-family:var(--mono)}
+  .tl-h .btn{margin-left:auto}
+  .tl-list{display:flex; flex-direction:column; gap:5px; margin-top:7px}
+  .tl-day.empty .tl-list{margin-top:0}
+  .tl-list .chip{font-size:13px; padding:7px 10px; white-space:normal}
+  .tl-list .chip em{margin-left:auto; font-style:normal; font-family:var(--mono); font-size:10.5px; color:var(--muted); white-space:nowrap; padding-left:8px}
+
+  /* ── forgotten / emoji / colour ── */
+  .job.stale{box-shadow:0 0 0 2px #F2C94C, var(--shadow)}
+  .tag.stale-tag{background:#FFF4CC; color:#7A5600; border-color:#F2C94C}
+  [data-theme="night"] .tag.stale-tag{background:#3A3016; color:#F5C451; border-color:#6B5620}
+  .alert.stale{border-left-color:#E2B53B}
+  .job.tinted{background:color-mix(in srgb,var(--tc) 8%,var(--card))}
+  .em{margin-right:5px}
+  .emo{display:flex; flex-wrap:wrap; gap:5px}
+  .emo button{width:34px; height:34px; border:1px solid var(--line); border-radius:var(--r-sm); background:var(--card); font-size:17px; padding:0; color:var(--muted)}
+  .emo button.on{border-color:var(--brand); box-shadow:0 0 0 2px var(--brand-soft)}
+  .cols{display:flex; gap:9px; margin-top:10px; align-items:center}
+  .cols button{width:26px; height:26px; border-radius:50%; border:2px solid var(--card); box-shadow:0 0 0 1px var(--line-2); padding:0; font-size:11px; color:var(--muted); background:var(--card)}
+  .cols button.on{box-shadow:0 0 0 2px var(--ink)}
+
+  /* ── focus mode ── */
+  .focus{position:fixed; inset:0; z-index:80; background:var(--paper); display:none; flex-direction:column; align-items:center; justify-content:center; padding:24px 16px; overflow-y:auto}
+  .focus.open{display:flex}
+  .fc{width:min(620px,100%); background:var(--card); border:1px solid var(--line); border-radius:calc(var(--r) + 6px); box-shadow:var(--shadow-lg); padding:28px}
+  .fc h2{font-family:var(--head); font-size:26px; line-height:1.3; margin:8px 0 4px}
+  .fc .meta{color:var(--muted); font-size:13px}
+  .timer{font-family:var(--mono); font-size:64px; font-weight:500; text-align:center; margin:18px 0 8px; color:var(--ink)}
+  .timer.brk{color:var(--st-done)}
+  .tbar{height:6px; background:var(--paper-2); border-radius:6px; overflow:hidden}
+  .tbar i{display:block; height:100%; background:var(--brand); transition:width 1s linear}
+  .timer.brk + .tbar i{background:var(--st-done)}
+  .fbtns{display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-top:16px}
+  .fsubs{margin-top:18px; border-top:1px solid var(--line)}
+  .fsubs label{display:flex; gap:10px; align-items:center; padding:8px 2px; font-size:14px; border-bottom:1px solid var(--line); cursor:pointer}
+  .fsubs input{width:17px; height:17px; accent-color:var(--st-done)}
+  .fsubs label.ok{color:var(--muted); text-decoration:line-through}
+  .fnotes{margin-top:14px; white-space:pre-wrap; font-size:13px; color:var(--ink-2); background:var(--paper); border-radius:var(--r-sm); padding:10px 12px}
+  .fq{margin-top:14px; font-size:12px; color:var(--muted); text-align:center}
+
+  /* ── morning plan ── */
+  .plist{display:flex; flex-direction:column; gap:6px; max-height:52vh; overflow-y:auto}
+  .pi{display:flex; align-items:center; gap:10px; text-align:left; border:1px solid var(--line); border-radius:var(--r-sm); background:var(--card); padding:9px 11px; font-size:13.5px}
+  .pi:hover{border-color:var(--line-2)}
+  .pi .pn{width:24px; height:24px; border-radius:50%; border:1.5px solid var(--line-2); display:grid; place-items:center; font-family:var(--mono); font-size:12px; font-weight:600; flex:0 0 auto; color:var(--brand-ink)}
+  .pi.on{border-color:var(--brand); background:var(--brand-soft)}
+  .pi.on .pn{background:var(--brand); border-color:var(--brand)}
+  .pi .pt{flex:1; min-width:0; font-weight:600}
+  .pi .ps{font-size:11px; color:var(--muted); font-family:var(--mono); white-space:nowrap}
+  .pi .why{font-size:10px; font-weight:600; padding:1px 6px; border-radius:20px; border:1px solid currentColor; white-space:nowrap}
+  .why.w0{color:var(--accent)} .why.w1{color:var(--st-pending)} .why.w2{color:var(--brand)} .why.w3{color:var(--ink-2)} .why.w4{color:#B08500}
+  .td-item .star{font-size:12px}
+
   /* ── design picker ── */
   .themes{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px}
   .th{border:2px solid var(--line); border-radius:var(--r); background:var(--card); padding:0; text-align:left; overflow:hidden; transition:border-color .12s}
@@ -414,6 +500,13 @@ try{var u=JSON.parse(localStorage.getItem('wn:ui')||'{}');document.documentEleme
     .week{grid-template-columns:repeat(3,minmax(0,1fr))}
   }
   @media (max-width:760px){
+    .cell{min-height:58px; padding:3px}
+    .cell .chip{padding:1px 3px; font-size:10px}
+    .cell .chip span{display:none}
+    .cell .chip:not(:has(i)):after{content:"•"}
+    .calhint{display:none}
+    .timer{font-size:52px}
+    .fc{padding:20px}
     .matrix{grid-template-columns:1fr}
     .two{grid-template-columns:1fr}
     .top-in,.shell,.alerts{padding-left:16px; padding-right:16px}
@@ -450,6 +543,7 @@ try{var u=JSON.parse(localStorage.getItem('wn:ui')||'{}');document.documentEleme
     <button class="btn q" id="bellBtn" title="開啟到期通知">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
     </button>
+    <button class="btn" id="focusBtn" title="專注模式：一次做一件">🎯 專注</button>
     <button class="btn solid" id="addBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> 新增工作
     </button>
@@ -464,6 +558,7 @@ try{var u=JSON.parse(localStorage.getItem('wn:ui')||'{}');document.documentEleme
       <div class="seg" id="viewSeg">
         <button data-v="matrix" class="on">四象限</button>
         <button data-v="category">類別</button>
+        <button data-v="cal">月曆</button>
         <button data-v="week">本週</button>
         <button data-v="overview">總覽</button>
       </div>
@@ -550,6 +645,7 @@ try{var u=JSON.parse(localStorage.getItem('wn:ui')||'{}');document.documentEleme
   </div>
   <div class="m-body">
     <div class="f"><label class="lbl">工作標題 Title</label><input class="in" id="iTitle" placeholder="例：S5 Elasticity 工作紙批改"></div>
+    <div class="f"><label class="lbl">標記 Emoji &amp; 顏色</label><div class="emo" id="iEmo"></div><div class="cols" id="iCol"></div></div>
     <div class="f"><label class="lbl">類別 Category</label><div class="picks" id="iLabels"></div></div>
     <div class="f"><label class="lbl">優先次序 Priority</label>
       <div class="two">
@@ -582,6 +678,19 @@ try{var u=JSON.parse(localStorage.getItem('wn:ui')||'{}');document.documentEleme
     <button class="btn" id="jobToday"></button>
     <div class="spacer"></div><button class="btn" id="jobCancel">取消</button><button class="btn solid" id="jobSave">儲存</button>
   </div>
+</div></div>
+
+<!-- focus mode -->
+<div class="focus" id="focus"><div class="fc" id="fc"></div><div class="fq">一次淨係做一件事 · Esc 離開</div></div>
+
+<!-- morning plan -->
+<div class="scrim" id="planScrim"><div class="modal" style="width:min(640px,100%)">
+  <div class="m-head"><div><h2 id="planH">今日最重要嘅 3 件事係？</h2><div class="code">揀最多 3 件，會排喺今日待辦最頂</div></div><button class="btn q" id="planX">✕</button></div>
+  <div class="m-body">
+    <div class="plist" id="planList"></div>
+    <input class="in" id="planNew" placeholder="清單冇？直接打一件新工作，按 Enter 加入">
+  </div>
+  <div class="m-foot"><button class="btn q" id="planSkip">今日唔使揀</button><div class="spacer"></div><span class="lbl" id="planN"></span><button class="btn solid" id="planGo">開始今日</button></div>
 </div></div>
 
 <!-- design modal -->
@@ -922,9 +1031,17 @@ function ensureToday(){
   }
 }
 const inToday=id=>!!(D.today&&D.today.ids.includes(id));
+/* 被遺忘：未完成而且 7 日冇郁過 */
+const STALE=7*864e5;
+const staleDays=t=>t.status==='done'?0:Math.floor((Date.now()-(t.updated||t.created||Date.now()))/864e5);
+const isStale=t=>t.status!=='done'&&staleDays(t)>=7;
+const EMO=['','📌','🔥','⭐','📚','✍️','📝','📊','🏫','🔧','📞','💰','🧪','🎯','💡','❤️'];
+const TCOL=[['','無'],['#E5484D','紅'],['#F76B15','橙'],['#E2B53B','黃'],['#30A46C','綠'],['#3E63DD','藍'],['#8E4EC6','紫']];
+const tColor=t=>{const s=secOf(t),L=s&&lab(s,t.labelId);return t.color||(L?L.color:'var(--line-2)')};
 function toggleToday(id){
   if(inToday(id)){D.today.ids=D.today.ids.filter(x=>x!==id);toast('已從今日移除')}
   else{D.today.ids.push(id);toast('已加入今日待辦')}
+  const t=D.tasks.find(x=>x.id===id);if(t)t.updated=Date.now();
   save();render();
 }
 function moveToday(id,dir){
@@ -932,12 +1049,13 @@ function moveToday(id,dir){
   [a[i],a[j]]=[a[j],a[i]];save();renderToday();
 }
 function sugWhy(t){
-  if(!t.due) return t.urgent&&t.important?[2,'即刻做']:null;
+  if(!t.due) return t.urgent&&t.important?[2,'即刻做']:isStale(t)?[4,'好耐冇郁']:null;
   const d=new Date(t.due),k=dayKey(d),now=new Date(),tm=new Date();tm.setDate(tm.getDate()+1);
   if(d<now) return[0,'逾期'];
   if(k===todayStr()) return[1,'今日到期'];
   if(t.urgent&&t.important) return[2,'即刻做'];
   if(k===dayKey(tm)) return[3,'聽日到期'];
+  if(isStale(t)) return[4,'好耐冇郁'];
   return null;
 }
 function renderToday(){
@@ -953,7 +1071,7 @@ function renderToday(){
       <span class="grip" title="拖曳排次序">${I.grip}</span>
       <span class="no">${i+1}</span>
       <button class="tick" data-tick="${t.id}" title="標記完成">${CHECK}</button>
-      <div class="tb" data-open="${t.id}"><div class="tt">${esc(t.title||'（未命名）')}</div>
+      <div class="tb" data-open="${t.id}"><div class="tt">${(D.today.top||[]).includes(t.id)?'<span class="star">⭐ </span>':''}${t.emoji?t.emoji+' ':''}${esc(t.title||'（未命名）')}</div>
         <div class="tm"><span>${esc(s?(s.pre||s.name):'')}</span>${t.due?`<span class="${ds==='over'?'over':''}">${esc(fdue(t.due))}</span>`:''}${n?`<span>☑ ${n}</span>`:''}${t.urgent&&t.important?'<span style="color:var(--accent)">即刻做</span>':''}</div></div>
       <div class="ops"><button data-up="${t.id}" title="上移">${I.up}</button><button data-down="${t.id}" title="下移">${I.down}</button><button data-rm="${t.id}" title="從今日移除">${I.x}</button></div>
     </li>`};
@@ -968,7 +1086,7 @@ function renderToday(){
       ${items.length?`<ol class="td-list" id="tdList">${items.map(row).join('')}</ol>`:'<div class="td-empty">今日未揀要做嘅工作。<br>喺下面「建議加入」撳 ＋，或者喺任何工作卡右上角撳 ☀ 加入。</div>'}
       <form class="td-add" id="tdAdd" autocomplete="off"><input id="tdNew" placeholder="直接加一項到今日，按 Enter"></form>
       ${sug.length?`<div class="td-sug"><span class="lbl">建議加入 Suggested</span>${sug.map(x=>`<div class="sg" data-open="${x.t.id}"><span class="why w${x.w[0]}">${x.w[1]}</span><span class="st">${esc(x.t.title)}</span><button class="plus" data-add="${x.t.id}" title="加入今日">${I.plus}</button></div>`).join('')}</div>`:''}
-      ${done?'<div class="td-foot"><button class="btn sm" id="tdClear">清走已完成</button></div>':''}
+      <div class="td-foot"><button class="btn sm" id="tdFocus">🎯 開始專注</button><button class="btn sm" id="tdPlan">⭐ 揀今日 3 件</button>${done?'<button class="btn sm" id="tdClear">清走已完成</button>':''}</div>
     </div>`;
   $('#fabN').textContent=left;
   el.querySelectorAll('[data-tick]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleDone(b.dataset.tick)});
@@ -979,6 +1097,7 @@ function renderToday(){
   el.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>toggleToday(b.dataset.rm));
   const c=$('#tdClear');if(c)c.onclick=()=>{D.today.ids=D.today.ids.filter(id=>{const t=D.tasks.find(x=>x.id===id);return t&&t.status!=='done'});save();renderToday()};
   $('#tdClose').onclick=()=>el.classList.remove('open');
+  $('#tdFocus').onclick=()=>openFocus();$('#tdPlan').onclick=()=>openPlan(true);
   $('#tdAdd').onsubmit=e=>{e.preventDefault();quickAdd($('#tdNew').value,true)&&renderToday()};
   /* 拖曳排序 */
   let dragId=null;
@@ -1013,9 +1132,10 @@ function parseQuick(raw){
   });
   return{title:s.replace(/\s+/g,' ').trim(),urgent,important,due:due?due.toISOString():''};
 }
-function quickAdd(raw,toToday){
+function quickAdd(raw,toToday,onDay){
   const p=parseQuick(raw||'');
   if(!p.title){toast('請輸入工作標題');return false}
+  if(!p.due&&onDay){const d=new Date(onDay+'T18:00');p.due=d.toISOString()}
   const t={id:uid(),jid:newJid(D.cur),sectionId:D.cur,title:p.title,labelId:null,urgent:p.urgent,important:p.important,status:'todo',progress:0,due:p.due,notes:'',files:[],subs:[],repeat:'',created:Date.now(),updated:Date.now()};
   D.tasks.push(t);
   if(toToday) D.today.ids.push(t.id);
@@ -1043,7 +1163,7 @@ function spawnNext(t){
   while(new Date(n)<new Date()) n=nextDue(n,t.repeat);
   t.spawned=true;
   D.tasks.push({id:uid(),jid:newJid(t.sectionId),sectionId:t.sectionId,title:t.title,labelId:t.labelId,urgent:t.urgent,important:t.important,
-    status:'todo',progress:0,due:n,notes:t.notes,files:[],subs:(t.subs||[]).map(x=>({id:uid(),text:x.text,done:false})),repeat:t.repeat,created:Date.now(),updated:Date.now()});
+    status:'todo',progress:0,due:n,notes:t.notes,emoji:t.emoji||'',color:t.color||'',files:[],subs:(t.subs||[]).map(x=>({id:uid(),text:x.text,done:false})),repeat:t.repeat,created:Date.now(),updated:Date.now()});
   toast('已開下一次：'+fdue(n));
 }
 
@@ -1069,17 +1189,18 @@ const pass=t=>!(flt.hide&&t.status==='done')&&(!flt.st||t.status===flt.st)&&(!fl
 function card(t,i,s){
   const L=lab(s,t.labelId), S=st(t.status), ds=dstate(t.due,t.status);
   const ns=t.subs&&t.subs.length?t.subs.filter(x=>x.done).length+'/'+t.subs.length:'';
-  return `<article class="job${t.status==='done'?' done':''}" data-id="${t.id}">
-    <span class="tape" style="background:${L?L.color:'var(--line-2)'}"></span>
+  return `<article class="job${t.status==='done'?' done':''}${isStale(t)?' stale':''}${t.color?' tinted':''}" data-id="${t.id}"${t.color?` style="--tc:${t.color}"`:''}>
+    <span class="tape" style="background:${tColor(t)}"></span>
     <span class="idx">${i+1}</span>
     <button class="tick" data-tick="${t.id}" title="標記完成">${CHECK}</button>
     <button class="sun${inToday(t.id)?' on':''}" data-today="${t.id}" title="${inToday(t.id)?'已喺今日待辦（撳一下移除）':'加入今日待辦'}">${I.sun}</button>
     <div class="code">${esc(t.jid||'')}</div>
-    <div class="title">${esc(t.title||'（未命名）')}</div>
+    <div class="title">${t.emoji?`<span class="em">${t.emoji}</span>`:''}${esc(t.title||'（未命名）')}</div>
     <div class="tags">
       ${L?`<span class="tag" style="border-color:${L.color}55;color:${L.color};background:${L.color}12"><span class="d" style="background:${L.color}"></span>${esc(L.name)}</span>`:''}
       <span class="tag quad">${quadName(t)}</span>
       <span class="tag st" style="border-color:var(${S.c});color:var(${S.c})">${S.n}</span>
+      ${isStale(t)?`<span class="tag stale-tag">💤 ${staleDays(t)} 日冇郁</span>`:''}
     </div>
     <div class="bar"><i style="width:${t.progress||0}%"></i></div>
     <div class="foot">
@@ -1100,6 +1221,7 @@ function board(){
   const el=$('#board');
   if(view==='overview'){el.innerHTML=overview()}
   else if(view==='week'){el.innerHTML=week()}
+  else if(view==='cal'){el.innerHTML=calendar()}
   else{
     const s=sec(), list=D.tasks.filter(t=>t.sectionId===D.cur).filter(pass).sort(sortT);
     if(view==='matrix'){
@@ -1117,8 +1239,98 @@ function board(){
   }
   el.querySelectorAll('[data-tick]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleDone(b.dataset.tick)});
   el.querySelectorAll('[data-today]').forEach(b=>b.onclick=e=>{e.stopPropagation();toggleToday(b.dataset.today)});
-  el.querySelectorAll('.job,.wk').forEach(c=>c.onclick=()=>openJob(c.dataset.id));
+  el.querySelectorAll('.job,.wk,.chip').forEach(c=>c.onclick=e=>{e.stopPropagation();openJob(c.dataset.id)});
+  bindDrag(el);
+  if(view==='cal') bindCal(el);
   el.querySelectorAll('tbody tr[data-id]').forEach(r=>r.onclick=()=>openJob(r.dataset.id));
+}
+
+/* ── 月曆 ── */
+let calOff=0, calMode=null, calOpen=null, dragId=null;
+const WDN=['一','二','三','四','五','六','日'];
+function calSrc(){return (ovScope==='cur'?D.tasks.filter(t=>t.sectionId===D.cur):D.tasks).filter(pass)}
+function chip(t,long){
+  const ds=dstate(t.due,t.status),d=t.due&&new Date(t.due);
+  return `<div class="chip${t.status==='done'?' done':''}${ds==='over'?' over':''}${isStale(t)?' stale':''}" draggable="true" data-id="${t.id}" style="--c:${tColor(t)}" title="${esc(t.title)}${t.due?' · '+esc(fdue(t.due)):''}">${t.emoji?`<i>${t.emoji}</i>`:''}<span>${esc(t.title||'（未命名）')}</span>${long?`<em>${d?pad(d.getHours())+':'+pad(d.getMinutes())+' · ':''}${esc((secOf(t)||{}).pre||'')}</em>`:''}</div>`;
+}
+function calendar(){
+  if(!calMode) calMode=innerWidth<760?'list':'month';
+  const base=new Date();base.setHours(0,0,0,0);base.setDate(1);base.setMonth(base.getMonth()+calOff);
+  const y=base.getFullYear(),m=base.getMonth();
+  const bar=`<div class="calbar"><div class="seg" id="calSeg"><button data-m="month"${calMode==='month'?' class="on"':''}>月曆格</button><button data-m="list"${calMode==='list'?' class="on"':''}>時間線</button></div>
+    ${calMode==='month'?`<button class="btn q sm" data-cal="-1" title="上個月">‹</button><h3>${y}年${m+1}月</h3><button class="btn q sm" data-cal="1" title="下個月">›</button><button class="btn sm" data-cal="0">今個月</button>`:''}
+    <span class="calhint">撳日子直接加工作 · 拖曳工作去另一日改期</span></div>`;
+  return bar+(calMode==='month'?monthGrid(y,m):timeline());
+}
+function monthGrid(y,m){
+  const src=calSrc().filter(t=>t.due),tk=todayStr();
+  const first=new Date(y,m,1),lead=(first.getDay()+6)%7,dim=new Date(y,m+1,0).getDate();
+  const weeks=Math.ceil((lead+dim)/7),start=new Date(y,m,1-lead);
+  let h=WDN.map(w=>`<div class="wd">${w}</div>`).join('');
+  for(let i=0;i<weeks*7;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const k=dayKey(d);
+    const items=src.filter(t=>dayKey(new Date(t.due))===k).sort(sortT);
+    const lim=calOpen===k?99:3;
+    h+=`<div class="cell${d.getMonth()!==m?' out':''}${k===tk?' is-today':''}${i%7>4?' wkend':''}" data-day="${k}">
+      <div class="dn"><b>${d.getDate()}</b><span class="plus">＋</span></div>
+      ${items.slice(0,lim).map(t=>chip(t)).join('')}
+      ${items.length>lim?`<span class="more" data-more="${k}">+${items.length-lim} 項</span>`:''}</div>`;
+  }
+  return `<div class="cal">${h}</div>`;
+}
+function timeline(){
+  const src=calSrc(),now=new Date(),t0=new Date();t0.setHours(0,0,0,0);
+  const over=src.filter(t=>t.due&&t.status!=='done'&&new Date(t.due)<t0).sort(sortT);
+  const nodue=src.filter(t=>!t.due&&t.status!=='done').sort(sortT);
+  let h='';
+  if(over.length) h+=`<section class="tl-day overdue"><div class="tl-h"><b>⚠️ 逾期未做</b><span>${over.length} 項 · 拖去另一日重新安排</span></div><div class="tl-list">${over.map(t=>chip(t,1)).join('')}</div></section>`;
+  for(let i=0;i<28;i++){
+    const d=new Date(t0);d.setDate(t0.getDate()+i);const k=dayKey(d);
+    const items=src.filter(t=>t.due&&dayKey(new Date(t.due))===k).sort(sortT);
+    const name=i===0?'今日':i===1?'聽日':'星期'+WDN[(d.getDay()+6)%7];
+    h+=`<section class="tl-day${i===0?' is-today':''}${items.length||i===0?'':' empty'}" data-day="${k}"><div class="tl-h"><b>${name}</b><span>${d.getMonth()+1}/${d.getDate()}${items.length?' · '+items.length+' 項':''}</span><button class="btn q sm" data-addday="${k}" title="加工作到呢日">＋</button></div>
+      <div class="tl-list">${items.map(t=>chip(t,1)).join('')}</div></section>`;
+  }
+  if(nodue.length) h+=`<section class="tl-day" data-day=""><div class="tl-h"><b>📥 未定日期</b><span>${nodue.length} 項 · 拖去某一日就會設定到期日</span></div><div class="tl-list">${nodue.map(t=>chip(t,1)).join('')}</div></section>`;
+  return `<div class="tl">${h}</div>`;
+}
+/* 喺日子度直接打字加工作 */
+function inlineAdd(box,k){
+  if(box.querySelector('.cadd'))return;
+  const inp=document.createElement('input');inp.className='cadd';inp.placeholder='打字後按 Enter';
+  (box.querySelector('.tl-list')||box).appendChild(inp);inp.focus();
+  inp.onclick=e=>e.stopPropagation();
+  inp.onkeydown=e=>{
+    if(e.key==='Enter'&&!e.isComposing){e.preventDefault();const v=inp.value.trim();if(v&&quickAdd(v,false,k)){/* render 已重畫 */}}
+    if(e.key==='Escape'){inp.remove()}
+  };
+  inp.onblur=()=>setTimeout(()=>inp.isConnected&&!inp.value&&inp.remove(),150);
+}
+function bindCal(el){
+  el.querySelectorAll('#calSeg button').forEach(b=>b.onclick=()=>{calMode=b.dataset.m;try{localStorage.setItem('wn:calMode',calMode)}catch(e){}board()});
+  el.querySelectorAll('[data-cal]').forEach(b=>b.onclick=()=>{const v=+b.dataset.cal;calOff=v?calOff+v:0;calOpen=null;board()});
+  el.querySelectorAll('[data-more]').forEach(b=>b.onclick=e=>{e.stopPropagation();calOpen=b.dataset.more;board()});
+  el.querySelectorAll('.cell').forEach(c=>c.onclick=()=>inlineAdd(c,c.dataset.day));
+  el.querySelectorAll('[data-addday]').forEach(b=>b.onclick=e=>{e.stopPropagation();inlineAdd(b.closest('.tl-day'),b.dataset.addday)});
+}
+/* 拖曳改期：保留原本時間，冇時間就用 18:00；拖去「未定日期」就清除到期日 */
+function moveTo(id,k){
+  const t=D.tasks.find(x=>x.id===id);if(!t)return;
+  if(k===''){if(!t.due)return;t.due='';t.spawned=false;t.updated=Date.now();save();render();toast('已清除到期日');return}
+  const old=t.due?new Date(t.due):null;if(old&&dayKey(old)===k)return;
+  const d=new Date(k+'T00:00');if(old)d.setHours(old.getHours(),old.getMinutes());else d.setHours(18,0,0,0);
+  t.due=d.toISOString();t.spawned=false;t.updated=Date.now();save();render();toast('已改到 '+fdue(t.due));
+}
+function bindDrag(el){
+  el.querySelectorAll('[draggable="true"][data-id]').forEach(c=>{
+    c.addEventListener('dragstart',e=>{dragId=c.dataset.id;c.classList.add('dragging');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',dragId)}catch(x){}});
+    c.addEventListener('dragend',()=>{c.classList.remove('dragging');el.querySelectorAll('.drop').forEach(x=>x.classList.remove('drop'))});
+  });
+  el.querySelectorAll('[data-day]').forEach(z=>{
+    z.addEventListener('dragover',e=>{if(!dragId)return;e.preventDefault();z.classList.add('drop')});
+    z.addEventListener('dragleave',e=>{if(!z.contains(e.relatedTarget))z.classList.remove('drop')});
+    z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('drop');if(dragId)moveTo(dragId,z.dataset.day);dragId=null});
+  });
 }
 
 /* ── 本週 ── */
@@ -1132,15 +1344,15 @@ function week(){
   const nodue=src.filter(t=>!t.due&&t.status!=='done').length;
   const html=days.map((d,i)=>{
     const k=dayKey(d),items=dated.filter(t=>dayKey(new Date(t.due))===k).sort(sortT);
-    return `<section class="day${k===tk?' is-today':''}${i>4?' wkend':''}"><div class="dh"><b>星期${WD[i]}</b><span>${d.getMonth()+1}/${d.getDate()}</span>${items.length?`<em>${items.length}</em>`:''}</div>
+    return `<section class="day${k===tk?' is-today':''}${i>4?' wkend':''}" data-day="${k}"><div class="dh"><b>星期${WD[i]}</b><span>${d.getMonth()+1}/${d.getDate()}</span>${items.length?`<em>${items.length}</em>`:''}</div>
       <div class="dl">${items.map(wkItem).join('')||'<div class="dnone">—</div>'}</div></section>`}).join('');
   return `<div class="week">${html}</div>${nodue?`<div class="wk-foot">另有 ${nodue} 項未設到期日，喺「四象限」或「總覽」睇。</div>`:''}`;
 }
 function wkItem(t){
   const s=secOf(t),L=s&&lab(s,t.labelId),d=new Date(t.due);
-  return `<div class="wk${t.status==='done'?' done':''}" data-id="${t.id}" style="--c:${L?L.color:'var(--line-2)'}">
+  return `<div class="wk${t.status==='done'?' done':''}" data-id="${t.id}" draggable="true" style="--c:${tColor(t)}">
     <button class="tk" data-tick="${t.id}" title="標記完成">${CHECK}</button>
-    <div class="wb"><div class="wt">${esc(t.title||'（未命名）')}</div><div class="wm"><span>${pad(d.getHours())}:${pad(d.getMinutes())} · ${esc(s?s.pre:'')}</span>
+    <div class="wb"><div class="wt">${t.emoji?t.emoji+' ':''}${esc(t.title||'（未命名）')}</div><div class="wm"><span>${pad(d.getHours())}:${pad(d.getMinutes())} · ${esc(s?s.pre:'')}</span>
     <button class="sun${inToday(t.id)?' on':''}" data-today="${t.id}" title="加入今日待辦">${I.sun}</button></div></div></div>`;
 }
 
@@ -1185,7 +1397,10 @@ function alerts(){
   const pill=t=>`<span class="pill" data-id="${t.id}">${esc(t.title||'（未命名）')} <em>${esc(fdue(t.due))}</em></span>`;
   if(over.length) el.innerHTML+=`<div class="alert"><h3>已逾期 ${over.length} 項</h3><div class="row">${over.map(pill).join('')}</div></div>`;
   if(soon.length) el.innerHTML+=`<div class="alert soon"><h3>24 小時內到期 ${soon.length} 項</h3><div class="row">${soon.map(pill).join('')}</div></div>`;
-  el.querySelectorAll('.pill').forEach(p=>p.onclick=()=>openJob(p.dataset.id));
+  const st=D.tasks.filter(isStale).sort((a,b)=>staleDays(b)-staleDays(a));
+  if(st.length) el.innerHTML+=`<div class="alert stale"><h3>💤 被遺忘 ${st.length} 項</h3><div class="row">${st.slice(0,8).map(t=>`<span class="pill" data-id="${t.id}">${t.emoji?t.emoji+' ':''}${esc(t.title||'（未命名）')} <em style="color:#B08500">${staleDays(t)} 日</em></span>`).join('')}${st.length>8?`<span class="pill" style="cursor:default">+${st.length-8}</span>`:''}</div><button class="btn sm" id="staleOk" style="margin-left:auto">我睇過喇</button></div>`;
+  el.querySelectorAll('.pill[data-id]').forEach(p=>p.onclick=()=>openJob(p.dataset.id));
+  const ok=$('#staleOk');if(ok)ok.onclick=()=>{st.forEach(t=>t.updated=Date.now());save();render();toast('已重新計時，7 日後再提你')};
 }
 
 function toggleDone(id){
@@ -1196,7 +1411,13 @@ function toggleDone(id){
 }
 
 /* ══════════════ job modal ══════════════ */
-let ms={labelId:null,urgent:false,important:false,status:'todo'};
+let ms={labelId:null,urgent:false,important:false,status:'todo',emoji:'',color:''};
+function pickMark(){
+  $('#iEmo').innerHTML=EMO.map(e=>`<button type="button" data-e="${e}" class="${ms.emoji===e?'on':''}" title="${e||'無'}">${e||'∅'}</button>`).join('');
+  $('#iEmo').querySelectorAll('button').forEach(b=>b.onclick=()=>{ms.emoji=b.dataset.e;pickMark()});
+  $('#iCol').innerHTML='<span class="lbl" style="margin-right:2px">顏色</span>'+TCOL.map(c=>`<button type="button" data-c="${c[0]}" class="${ms.color===c[0]?'on':''}" title="${c[1]}" style="${c[0]?'background:'+c[0]:''}">${c[0]?'':'∅'}</button>`).join('');
+  $('#iCol').querySelectorAll('button').forEach(b=>b.onclick=()=>{ms.color=b.dataset.c;pickMark()});
+}
 function pickLabels(){
   const s=sec(),b=$('#iLabels');
   b.innerHTML=s.labels.map(l=>`<button type="button" class="pk${ms.labelId===l.id?' on':''}" data-id="${l.id}"><span class="d" style="background:${l.color}"></span>${esc(l.name)}</button>`).join('')||'<span style="font-size:12px;color:var(--muted)">未有類別，可按「編輯類別」新增</span>';
@@ -1229,23 +1450,23 @@ function openJob(id){
   const t=id?D.tasks.find(x=>x.id===id):null;
   if(id&&!t)return;
   /* 由總覽／本週／今日打開其他分頁嘅工作：先切去嗰個分頁，類別先會啱 */
-  if(t&&t.sectionId!==D.cur){D.cur=t.sectionId;save();tabs();if(view!=='overview'&&view!=='week')board()}
+  if(t&&t.sectionId!==D.cur){D.cur=t.sectionId;save();tabs();if(!['overview','week','cal'].includes(view))board()}
   editing=id||null;const s=sec();
   $('#iRep').innerHTML=REP.map(r=>`<option value="${r[0]}">${r[1]}</option>`).join('');
   if(t){
     $('#jobTitle').textContent='編輯工作';$('#jobCode').textContent=(t.jid||'')+' · '+s.name;
     $('#iTitle').value=t.title||'';$('#iNotes').value=t.notes||'';$('#iDue').value=t.due?toLocal(t.due):'';
     $('#iProg').value=t.progress||0;$('#iProgN').textContent=(t.progress||0)+'%';$('#iRep').value=t.repeat||'';
-    ms={labelId:t.labelId||null,urgent:!!t.urgent,important:!!t.important,status:t.status||'todo'};
+    ms={labelId:t.labelId||null,urgent:!!t.urgent,important:!!t.important,status:t.status||'todo',emoji:t.emoji||'',color:t.color||''};
     drafts=(t.files||[]).map(f=>({...f}));subDraft=(t.subs||[]).map(x=>({...x}));$('#jobDel').style.display='';
   }else{
     $('#jobTitle').textContent='新增工作';$('#jobCode').textContent=s.pre+'-'+String(D.seq).padStart(4,'0')+' · '+s.name;
     $('#iTitle').value='';$('#iNotes').value='';$('#iDue').value='';$('#iProg').value=0;$('#iProgN').textContent='0%';$('#iRep').value='';
-    ms={labelId:null,urgent:false,important:false,status:'todo'};drafts=[];subDraft=[];$('#jobDel').style.display='none';
+    ms={labelId:null,urgent:false,important:false,status:'todo',emoji:'',color:''};drafts=[];subDraft=[];$('#jobDel').style.display='none';
   }
   $('#iSubNew').value='';
   $('#iUrg').classList.toggle('on',ms.urgent);$('#iImp').classList.toggle('on',ms.important);
-  pickLabels();pickStatus();fileList();subList();jobTodayBtn();$('#jobScrim').classList.add('open');setTimeout(()=>$('#iTitle').focus(),40);
+  pickLabels();pickStatus();pickMark();fileList();subList();jobTodayBtn();$('#jobScrim').classList.add('open');setTimeout(()=>$('#iTitle').focus(),40);
 }
 const closeJob=()=>{$('#jobScrim').classList.remove('open');editing=null;drafts=[];subDraft=[]};
 
@@ -1257,7 +1478,7 @@ async function saveJob(){
   const due=$('#iDue').value?new Date($('#iDue').value).toISOString():'';
   const prog=subs.length?Math.round(subs.filter(x=>x.done).length/subs.length*100):(ms.status==='done'?100:+$('#iProg').value);
   const repeat=$('#iRep').value, files=drafts.map(f=>({id:f.id,name:f.name,size:f.size,type:f.type,dataUrl:f.dataUrl}));
-  const fields={title,labelId:ms.labelId,urgent:ms.urgent,important:ms.important,status:ms.status,progress:prog,due,repeat,subs,notes:$('#iNotes').value.trim(),files,updated:Date.now()};
+  const fields={title,emoji:ms.emoji,color:ms.color,labelId:ms.labelId,urgent:ms.urgent,important:ms.important,status:ms.status,progress:prog,due,repeat,subs,notes:$('#iNotes').value.trim(),files,updated:Date.now()};
   let t;
   if(editing){
     t=D.tasks.find(x=>x.id===editing);const was=t.status;
@@ -1455,18 +1676,115 @@ async function bell(){
   if(p==='granted'){toast('通知已開啟');$('#bellBtn').style.color='var(--st-done)';tick()}else toast('未開啟通知');
 }
 
+/* ══════════════ 專注模式 ══════════════ */
+const WORK=25*60, BRK=5*60;
+let fx={id:null,mode:'work',left:WORK,total:WORK,run:false,tm:null};
+function focusQueue(){
+  ensureToday();
+  const ids=D.today.ids.filter(id=>{const t=D.tasks.find(x=>x.id===id);return t&&t.status!=='done'});
+  if(ids.length) return ids;
+  return D.tasks.filter(t=>t.status!=='done').map(t=>({t,w:sugWhy(t)})).sort((a,b)=>((a.w?a.w[0]:9)-(b.w?b.w[0]:9))||sortT(a.t,b.t)).map(x=>x.t.id);
+}
+function openFocus(id){fx.id=id||focusQueue()[0]||null;$('#focus').classList.add('open');$('#today').classList.remove('open');drawFocus()}
+function closeFocus(){$('#focus').classList.remove('open');fxStop()}
+function fxStop(){fx.run=false;clearInterval(fx.tm);document.title='工作記事 · Work Notes'}
+function fxShow(){
+  const t=$('#fxT');if(!t)return;
+  t.textContent=pad(Math.floor(fx.left/60))+':'+pad(fx.left%60);
+  $('#fxBar').style.width=(100-fx.left/fx.total*100)+'%';
+  if(fx.run) document.title=(fx.mode==='work'?'⏱ ':'☕ ')+t.textContent+' · 工作記事';
+}
+function chime(){
+  try{const a=new (window.AudioContext||window.webkitAudioContext)();[0,.35,.7].forEach(s=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=880;o.connect(g);g.connect(a.destination);g.gain.setValueAtTime(.0001,a.currentTime+s);g.gain.exponentialRampToValueAtTime(.25,a.currentTime+s+.02);g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+s+.3);o.start(a.currentTime+s);o.stop(a.currentTime+s+.32)})}catch(e){}
+}
+function nudge(msg){toast(msg);try{if('Notification'in window&&Notification.permission==='granted')new Notification(msg,{tag:'focus'})}catch(e){}}
+function fxTick(){
+  fx.left--;
+  if(fx.left<=0){
+    chime();
+    if(fx.mode==='work'){fx.mode='break';fx.left=fx.total=BRK;nudge('做完 25 分鐘！休息 5 分鐘 ☕')}
+    else{fx.mode='work';fx.left=fx.total=WORK;nudge('休息完，再嚟一節 💪')}
+    drawFocus();return;
+  }
+  fxShow();
+}
+function drawFocus(){
+  const t=D.tasks.find(x=>x.id===fx.id),el=$('#fc');
+  if(!t){fxStop();el.innerHTML='<div style="text-align:center"><div style="font-size:44px">🎉</div><h2>冇未完成嘅工作</h2><p class="meta">今日待辦清晒，可以抖下。</p><div class="fbtns"><button class="btn" id="fxOut">離開</button></div></div>';$('#fxOut').onclick=closeFocus;return}
+  const s=secOf(t),q=focusQueue(),pos=q.indexOf(t.id);
+  el.innerHTML=`<div class="lbl">而家做緊 · Now${q.length>1?` · 之後仲有 ${q.length-(pos<0?0:1)} 件`:''}</div>
+    <h2>${t.emoji?t.emoji+' ':''}${esc(t.title)}</h2>
+    <div class="meta">${esc(s?s.name:'')}${t.due?' · 到期 '+esc(fdue(t.due)):''}</div>
+    <div class="timer${fx.mode==='break'?' brk':''}" id="fxT"></div>
+    <div class="tbar"><i id="fxBar"></i></div>
+    <div class="fbtns">
+      <button class="btn solid" id="fxGo">${fx.run?'⏸ 暫停':(fx.mode==='work'?'▶ 開始專注 25 分鐘':'▶ 開始休息 5 分鐘')}</button>
+      <button class="btn" id="fxReset">↺ 重設</button>
+    </div>
+    ${t.subs&&t.subs.length?`<div class="fsubs">${t.subs.map((x,i)=>`<label class="${x.done?'ok':''}"><input type="checkbox" data-i="${i}"${x.done?' checked':''}>${esc(x.text)}</label>`).join('')}</div>`:''}
+    ${t.notes?`<div class="fnotes">${esc(t.notes)}</div>`:''}
+    <div class="fbtns" style="margin-top:22px">
+      <button class="btn" id="fxDone" style="border-color:var(--st-done);color:var(--st-done)">✓ 完成呢件</button>
+      ${q.length>1?'<button class="btn" id="fxNext">下一件 →</button>':''}
+      <button class="btn q" id="fxOut">離開專注</button>
+    </div>`;
+  fxShow();
+  $('#fxGo').onclick=()=>{if(fx.run){fxStop()}else{fx.run=true;clearInterval(fx.tm);fx.tm=setInterval(fxTick,1000)}drawFocus()};
+  $('#fxReset').onclick=()=>{fxStop();fx.mode='work';fx.left=fx.total=WORK;drawFocus()};
+  el.querySelectorAll('.fsubs input').forEach(c=>c.onchange=()=>{const x=t.subs[+c.dataset.i];x.done=c.checked;t.progress=Math.round(t.subs.filter(s=>s.done).length/t.subs.length*100);t.updated=Date.now();save();render();drawFocus()});
+  $('#fxDone').onclick=()=>{toggleDone(t.id);fx.id=focusQueue()[0]||null;drawFocus()};
+  const nx=$('#fxNext');if(nx)nx.onclick=()=>{fx.id=q[(pos+1)%q.length];drawFocus()};
+  $('#fxOut').onclick=closeFocus;
+}
+
+/* ══════════════ 每朝揀 3 件 ══════════════ */
+let planSel=[];
+function openPlan(manual){
+  ensureToday();
+  planSel=manual?(D.today.top||[]).filter(id=>D.tasks.some(t=>t.id===id&&t.status!=='done')):[];
+  const h=new Date().getHours();
+  $('#planH').textContent=(manual?'':(h<12?'早晨！':h<18?'午安！':'晚安！'))+'今日最重要嘅 3 件事係？';
+  drawPlan();$('#planScrim').classList.add('open');
+}
+function drawPlan(){
+  const cand=D.tasks.filter(t=>t.status!=='done').map(t=>({t,w:sugWhy(t)}))
+    .sort((a,b)=>((a.w?a.w[0]:9)-(b.w?b.w[0]:9))||((inToday(b.t.id))-(inToday(a.t.id)))||sortT(a.t,b.t)).slice(0,15);
+  $('#planList').innerHTML=cand.length?cand.map(({t,w})=>{const n=planSel.indexOf(t.id)+1,s=secOf(t);
+    return `<button type="button" class="pi${n?' on':''}" data-id="${t.id}"><span class="pn">${n||''}</span><span class="pt">${t.emoji?t.emoji+' ':''}${esc(t.title)}</span>${w?`<span class="why w${w[0]}">${w[1]}</span>`:''}<span class="ps">${esc(s?s.pre:'')}${t.due?' · '+esc(fdue(t.due)):''}</span></button>`}).join('')
+    :'<div class="td-empty">未有未完成嘅工作。喺下面打一件新嘢先。</div>';
+  $('#planList').querySelectorAll('.pi').forEach(b=>b.onclick=()=>{const id=b.dataset.id,i=planSel.indexOf(id);
+    if(i>=0)planSel.splice(i,1);else if(planSel.length<3)planSel.push(id);else{toast('最多揀 3 件，揀少啲反而做得多');return}drawPlan()});
+  $('#planN').textContent=planSel.length+' / 3';
+}
+function planGo(){
+  if(!planSel.length){toast('揀最少一件，或者撳「今日唔使揀」');return}
+  D.today.ids=[...planSel,...D.today.ids.filter(id=>!planSel.includes(id))];
+  D.today.top=[...planSel];D.today.planned=todayStr();
+  planSel.forEach(id=>{const t=D.tasks.find(x=>x.id===id);if(t)t.updated=Date.now()});
+  save();render();$('#planScrim').classList.remove('open');toast('今日就做呢 '+D.today.top.length+' 件，加油 💪');
+}
+function maybePlan(){
+  ensureToday();
+  if(D.today.planned!==todayStr()&&D.tasks.some(t=>t.status!=='done')&&!document.querySelector('.scrim.open')&&!$('#focus').classList.contains('open')) openPlan(false);
+}
+
 /* ══════════════ wiring ══════════════ */
 function setView(v){
   view=v;
   $('#viewSeg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.v===v));
   $('#ovSeg').style.display=v==='overview'?'':'none';
-  $('#ovScope').style.display=(v==='overview'||v==='week')?'':'none';
+  $('#ovScope').style.display=(v==='overview'||v==='week'||v==='cal')?'':'none';
   $('#wkNav').style.display=v==='week'?'':'none';
   try{localStorage.setItem('wn:view',v)}catch(e){}
   board();
 }
 function bind(){
   $('#addBtn').onclick=()=>openJob(null);
+  $('#focusBtn').onclick=()=>openFocus();
+  $('#planGo').onclick=planGo;
+  $('#planSkip').onclick=()=>{D.today.planned=todayStr();save();$('#planScrim').classList.remove('open')};
+  $('#planX').onclick=()=>$('#planScrim').classList.remove('open');
+  $('#planNew').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing){e.preventDefault();if(quickAdd(e.target.value,false)){const t=D.tasks[D.tasks.length-1];if(planSel.length<3)planSel.push(t.id);e.target.value='';drawPlan()}}};
   $('#jobX').onclick=$('#jobCancel').onclick=closeJob;
   $('#jobSave').onclick=saveJob;$('#jobDel').onclick=delJob;
   $('#jobToday').onclick=()=>{if(!editing)return;toggleToday(editing);jobTodayBtn()};
@@ -1528,9 +1846,9 @@ function bind(){
 
   document.querySelectorAll('.scrim').forEach(s=>s.addEventListener('mousedown',e=>{if(e.target===s)s.classList.remove('open')}));
   document.addEventListener('keydown',e=>{
-    if(e.key==='Escape'){document.querySelectorAll('.scrim.open').forEach(s=>s.classList.remove('open'));$('#today').classList.remove('open')}
+    if(e.key==='Escape'){if($('#focus').classList.contains('open')&&!document.querySelector('.scrim.open')){closeFocus();return}document.querySelectorAll('.scrim.open').forEach(s=>s.classList.remove('open'));$('#today').classList.remove('open')}
     /* 撳 N 開新增；撳 / 去快速新增 */
-    const typing=/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName)||document.querySelector('.scrim.open');
+    const typing=/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName)||document.querySelector('.scrim.open')||$('#focus').classList.contains('open');
     if(!typing&&e.key==='/'){e.preventDefault();$('#qa').focus()}
     if(!typing&&(e.key==='n'||e.key==='N')&&!e.metaKey&&!e.ctrlKey){e.preventDefault();openJob(null)}
   });
@@ -1540,9 +1858,11 @@ function bind(){
 (async function(){
   await boot();applyUI();bind();
   let v='matrix';try{v=localStorage.getItem('wn:view')||'matrix'}catch(e){}
-  render();setView(['matrix','category','week','overview'].includes(v)?v:'matrix');
+  try{calMode=localStorage.getItem('wn:calMode')||null}catch(e){}
+  render();setView(['matrix','category','cal','week','overview'].includes(v)?v:'matrix');
+  setTimeout(maybePlan,600);
   newQuote();tick();
-  setInterval(()=>{tick();if(D.today&&D.today.date!==todayStr())render()},60000);
+  setInterval(()=>{tick();if(D.today&&D.today.date!==todayStr()){render();maybePlan()}},60000);
   acctChip();
   // GIS 可能未載入完，稍後再試一次自動登入
   if(GOOGLE_CLIENT_ID) setTimeout(()=>{ if(gsiReady()&&!acct){
